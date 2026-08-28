@@ -1,0 +1,12 @@
+{
+  "version": "0.4.0",
+  "targets": {
+    "esp32c6": {
+      "chip": "esp32c6",
+      "name": "ESP32-C6 (SuperMini / DevKit)",
+      "binary": "firmware/releases/esp32c6/ferrumos-core-esp32c6-v0.4.0.bin",
+      "flash_offset": "0x0",
+      "baudrate": 460800
+    }
+  }
+}
