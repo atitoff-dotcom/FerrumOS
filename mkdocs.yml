@@ -74,8 +74,10 @@ nav:
       - CAN Bus Networking: 2_recipes/can_networking.md
       - Electronic Shelf Labels (E-Ink): 2_recipes/esl_display.md
       - OTA Firmware Updates: 2_recipes/ota_firmware_update.md
+      - Inter-Script Signals (IPC): 2_recipes/inter_script_signals.md
   - API Reference:
       - Fluent JS Overview: 3_reference/js_api/index.md
+      - Reactive Signals & IPC: 3_reference/js_api/signals.md
       - GPIO (Digital Pins): 3_reference/js_api/gpio.md
       - ADC (Analog & Calibration): 3_reference/js_api/adc.md
       - I2C (Bus & Sensors): 3_reference/js_api/i2c.md
@@ -89,6 +91,7 @@ nav:
       - Fluent Chaining Standard: 4_concepts/fluent_chaining.md
       - Sub-20ms Hot-Swap: 4_concepts/hot_swap_15ms.md
       - Reactive Event Reactor: 4_concepts/reactive_events.md
+      - Zero-Copy Signal Bus: 4_concepts/reactive_signals.md
       - Digital Twin & Telemetry: 4_concepts/digital_twin.md
   - RFCs & Protocols:
       - Registry & Statuses: rfcs/index.md
@@ -117,8 +120,10 @@ nav:
           - Сеть CAN: ru/2_recipes/can_networking.md
           - Электронная бумага: ru/2_recipes/esl_display.md
           - Обновление OTA: ru/2_recipes/ota_firmware_update.md
+          - Межскриптовые сигналы: ru/2_recipes/inter_script_signals.md
       - Справочник API:
           - Обзор Fluent JS: ru/3_reference/js_api/index.md
+          - Реактивные сигналы (state.signal): ru/3_reference/js_api/signals.md
           - GPIO: ru/3_reference/js_api/gpio.md
           - ADC: ru/3_reference/js_api/adc.md
           - I2C: ru/3_reference/js_api/i2c.md
@@ -132,6 +137,7 @@ nav:
           - Стандарт Fluent Chaining: ru/4_concepts/fluent_chaining.md
           - Hot-Swap за 15 мс: ru/4_concepts/hot_swap_15ms.md
           - Реактивная модель: ru/4_concepts/reactive_events.md
+          - Архитектура шины сигналов: ru/4_concepts/reactive_signals.md
           - Цифровой двойник: ru/4_concepts/digital_twin.md
       - Реестр RFC:
           - Реестр и статусы: ru/rfcs/index.md
