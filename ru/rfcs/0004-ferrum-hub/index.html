@@ -1,0 +1,4355 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Reactive Micro-OS & Live Hot-Swap Studio for RISC-V & ESP32 Microcontrollers">
+      
+      
+        <meta name="author" content="FerrumOS Contributors">
+      
+      
+        <link rel="canonical" href="https://atitoff-dotcom.github.io/FerrumOS/ru/rfcs/0004-ferrum-hub/">
+      
+      
+        <link rel="prev" href="../0003-self-healing-discovery/">
+      
+      
+        <link rel="next" href="../0005-high-availability-clustering/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>RFC-0004 FerrumHub - FerrumOS</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-orange" data-md-color-accent="orange">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#rfc-0004-ferrumhub-webassembly-" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="FerrumOS" class="md-header__button md-logo" aria-label="FerrumOS" data-md-component="logo">
+      
+  <img src="../../../assets/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            FerrumOS
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              RFC-0004 FerrumHub
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-orange" data-md-color-accent="orange"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-orange" data-md-color-accent="orange"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/atitoff-dotcom/FerrumOS" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    atitoff-dotcom/FerrumOS
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../1_getting_started/01_quickstart/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../2_recipes/home_assistant_mqtt/" class="md-tabs__link">
+          
+  
+  
+  Recipes
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../3_reference/js_api/" class="md-tabs__link">
+          
+  
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../4_concepts/fluent_chaining/" class="md-tabs__link">
+          
+  
+  
+  Concepts
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../rfcs/" class="md-tabs__link">
+          
+  
+  
+  RFCs & Protocols
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+  🇷🇺 Русский
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="FerrumOS" class="md-nav__button md-logo" aria-label="FerrumOS" data-md-component="logo">
+      
+  <img src="../../../assets/logo.png" alt="logo">
+
+    </a>
+    FerrumOS
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/atitoff-dotcom/FerrumOS" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    atitoff-dotcom/FerrumOS
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1_getting_started/01_quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    01. Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1_getting_started/02_first_sensor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    02. First Sensor
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1_getting_started/03_smart_button/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    03. Smart Button
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1_getting_started/04_troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    04. Troubleshooting & FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Recipes
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Recipes
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../2_recipes/home_assistant_mqtt/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home Assistant MQTT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../2_recipes/battery_deep_sleep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Battery Deep Sleep
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../2_recipes/can_networking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CAN Bus Networking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../2_recipes/esl_display/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Electronic Shelf Labels (E-Ink)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../2_recipes/ota_firmware_update/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OTA Firmware Updates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../2_recipes/inter_script_signals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inter-Script Signals (IPC)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../3_reference/js_api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fluent JS Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../3_reference/js_api/signals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reactive Signals & IPC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../3_reference/js_api/gpio/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GPIO (Digital Pins)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../3_reference/js_api/adc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADC (Analog & Calibration)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../3_reference/js_api/i2c/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    I2C (Bus & Sensors)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../3_reference/js_api/spi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SPI (High-Speed Bus)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../3_reference/js_api/pwm_ws2812/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PWM & WS2812 (LEDs)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../3_reference/js_api/power_sleep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Power & Sleep Modes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../3_reference/js_api/thread_network/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Thread & Wireless Network
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../3_reference/js_api/uart_modbus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UART & Modbus
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../3_reference/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ferrum CLI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Concepts
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Concepts
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../4_concepts/fluent_chaining/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fluent Chaining Standard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../4_concepts/hot_swap_15ms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sub-20ms Hot-Swap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../4_concepts/reactive_events/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reactive Event Reactor
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../4_concepts/reactive_signals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Zero-Copy Signal Bus
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../4_concepts/digital_twin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Digital Twin & Telemetry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFCs & Protocols
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    RFCs & Protocols
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../rfcs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Registry & Statuses
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../rfcs/0001-can-distributed-bus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0001 CAN Distributed Bus
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../rfcs/0002-gpio-input-gestures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0002 GPIO Gestures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../rfcs/0003-self-healing-discovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0003 Self-Healing Discovery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../rfcs/0004-ferrum-hub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0004 FerrumHub
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../rfcs/0005-high-availability-clustering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0005 High Availability Cluster
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../rfcs/0006-ferrum-canvas-visual-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0006 FerrumCanvas UI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../rfcs/0007-brokerless-decentralized-fabric/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0007 Brokerless P2P Fabric
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../rfcs/0008-ferrum-scada-universal-mimic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0008 FerrumSCADA Mimic
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../rfcs/0009-fault-and-stress-testing-protocol/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0009 Reliability Stress Testing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../rfcs/0010-bsb-boiler-system-bus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0010 Unified Boiler Stack
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../rfcs/0011-embedded-wsrpc-lightweight-crypto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0011 Embedded WSRPC Crypto
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../rfcs/0012-network-time-synchronization-and-scheduled-events/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0012 Network Time Synchronization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🇷🇺 Русский
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    🇷🇺 Русский
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Главная
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Начало работы
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Начало работы
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1_getting_started/01_quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    01. Быстрый старт
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1_getting_started/02_first_sensor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    02. Первый сенсор
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1_getting_started/03_smart_button/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    03. Умная кнопка
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1_getting_started/04_troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    04. Решение проблем
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Рецепты
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Рецепты
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2_recipes/home_assistant_mqtt/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home Assistant MQTT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2_recipes/battery_deep_sleep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Глубокий сон
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2_recipes/can_networking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Сеть CAN
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2_recipes/esl_display/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Электронная бумага
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2_recipes/ota_firmware_update/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Обновление OTA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2_recipes/inter_script_signals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Межскриптовые сигналы
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_4" id="__nav_7_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Справочник API
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Справочник API
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../3_reference/js_api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Обзор Fluent JS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../3_reference/js_api/signals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Реактивные сигналы (state.signal)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../3_reference/js_api/gpio/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GPIO
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../3_reference/js_api/adc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../3_reference/js_api/i2c/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    I2C
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../3_reference/js_api/spi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SPI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../3_reference/js_api/pwm_ws2812/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PWM & WS2812
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../3_reference/js_api/power_sleep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Питание и сон
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../3_reference/js_api/thread_network/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Thread и сеть
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../3_reference/js_api/uart_modbus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UART & Modbus
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../3_reference/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ferrum CLI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_5" id="__nav_7_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Концепции
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Концепции
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../4_concepts/fluent_chaining/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Стандарт Fluent Chaining
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../4_concepts/hot_swap_15ms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hot-Swap за 15 мс
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../4_concepts/reactive_events/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Реактивная модель
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../4_concepts/reactive_signals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Архитектура шины сигналов
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../4_concepts/digital_twin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Цифровой двойник
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_7_6" id="__nav_7_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Реестр RFC
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Реестр RFC
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Реестр и статусы
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0001-can-distributed-bus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0001 Сеть CAN
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0002-gpio-input-gestures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0002 Жесты GPIO
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0003-self-healing-discovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0003 Авто-дискавери
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0004 FerrumHub
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0004 FerrumHub
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 1. Введение и Проблематика
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎯 1. Введение и Проблематика">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1. Контекст
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-home-assistant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2. Проблемы существующих систем (Home Assistant и др.):
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-webassembly-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏛️ 2. Архитектурный прорыв: Неизменяемый Микро-Хост + WebAssembly-Ядро
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-wasm-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💎 3. Ключевые преимущества WASM-архитектуры
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="💎 3. Ключевые преимущества WASM-архитектуры">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1. Один файл релиза для всех платформ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2. Пользовательские плагины крутятся в том же микро-хосте
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3. Неубиваемое обновление и мгновенный откат за 5 мс
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-zero-corruptions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4. Транзакционные миграции БД (Zero Corruptions)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-wamr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧩 4. Разработка плагинов: Простота и WAMR
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧩 4. Разработка плагинов: Простота и WAMR">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-wamr-wasm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1. Единый бинарный стандарт — только WAMR / WASM
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-web-ui-custom-web-ui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2. Собственный Web UI плагина (Custom Web UI)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-auto-ui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3. Автогенерация интерфейса настроек (Auto-UI)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-dsl-1-2-3-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚡ 5. Потоковые реактивные утилиты (DSL Паттерны 1, 2, 3, 4)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚡ 5. Потоковые реактивные утилиты (DSL Паттерны 1, 2, 3, 4)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-code-to-graph" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1. Интерактивный граф Code-to-Graph
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-ai-first-prompt-driven" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🤖 6. AI-First &amp; Prompt-Driven разработка
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-ferrumhub-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗺️ 7. Дорожная карта реализации FerrumHub (6 этапов)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🗺️ 7. Дорожная карта реализации FerrumHub (6 этапов)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-ferrum-runner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Этап 1: Неизменяемый Микро-Хост (ferrum-runner)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-wasm-ferrum-hubwasm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Этап 2: Системное WASM-Ядро (ferrum-hub.wasm)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Этап 3: Безопасное хранилище и Транзакционные миграции
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-wasm-custom-ui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Этап 4: Пользовательские WASM-плагины и Custom UI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-web-dashboard-pwa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Этап 5: Встроенный Web-интерфейс пользователя (Dashboard PWA)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-studio-ai-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Этап 6: Интеграция со Studio, AI-Промпты и Релиз
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📊 8. Сравнение архитектур
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0005-high-availability-clustering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0005 Высокая доступность
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0006-ferrum-canvas-visual-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0006 FerrumCanvas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0007-brokerless-decentralized-fabric/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0007 P2P Fabric
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0008-ferrum-scada-universal-mimic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0008 FerrumSCADA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0009-fault-and-stress-testing-protocol/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0009 Регламент стресс-тестов
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0010-bsb-boiler-system-bus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0010 Котельный шлюз
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0011-embedded-wsrpc-lightweight-crypto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0011 Криптография WSRPC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0012-network-time-synchronization-and-scheduled-events/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0012 Синхронизация времени
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 1. Введение и Проблематика
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎯 1. Введение и Проблематика">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1. Контекст
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-home-assistant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2. Проблемы существующих систем (Home Assistant и др.):
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-webassembly-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏛️ 2. Архитектурный прорыв: Неизменяемый Микро-Хост + WebAssembly-Ядро
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-wasm-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💎 3. Ключевые преимущества WASM-архитектуры
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="💎 3. Ключевые преимущества WASM-архитектуры">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1. Один файл релиза для всех платформ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2. Пользовательские плагины крутятся в том же микро-хосте
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3. Неубиваемое обновление и мгновенный откат за 5 мс
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-zero-corruptions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4. Транзакционные миграции БД (Zero Corruptions)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-wamr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧩 4. Разработка плагинов: Простота и WAMR
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧩 4. Разработка плагинов: Простота и WAMR">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-wamr-wasm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1. Единый бинарный стандарт — только WAMR / WASM
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-web-ui-custom-web-ui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2. Собственный Web UI плагина (Custom Web UI)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-auto-ui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3. Автогенерация интерфейса настроек (Auto-UI)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-dsl-1-2-3-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚡ 5. Потоковые реактивные утилиты (DSL Паттерны 1, 2, 3, 4)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚡ 5. Потоковые реактивные утилиты (DSL Паттерны 1, 2, 3, 4)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-code-to-graph" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1. Интерактивный граф Code-to-Graph
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-ai-first-prompt-driven" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🤖 6. AI-First &amp; Prompt-Driven разработка
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-ferrumhub-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗺️ 7. Дорожная карта реализации FerrumHub (6 этапов)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🗺️ 7. Дорожная карта реализации FerrumHub (6 этапов)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-ferrum-runner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Этап 1: Неизменяемый Микро-Хост (ferrum-runner)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-wasm-ferrum-hubwasm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Этап 2: Системное WASM-Ядро (ferrum-hub.wasm)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Этап 3: Безопасное хранилище и Транзакционные миграции
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-wasm-custom-ui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Этап 4: Пользовательские WASM-плагины и Custom UI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-web-dashboard-pwa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Этап 5: Встроенный Web-интерфейс пользователя (Dashboard PWA)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-studio-ai-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Этап 6: Интеграция со Studio, AI-Промпты и Релиз
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📊 8. Сравнение архитектур
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="rfc-0004-ferrumhub-webassembly-">🧭 RFC-0004: FerrumHub — Легковесный сервер оркестрации, микро-гипервизор и WebAssembly-экосистема<a class="headerlink" href="#rfc-0004-ferrumhub-webassembly-" title="Permanent link">&para;</a></h1>
+<table>
+<thead>
+<tr>
+<th>Метаданные</th>
+<th>Значение</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Номер</strong></td>
+<td>RFC-0004</td>
+</tr>
+<tr>
+<td><strong>Название</strong></td>
+<td>FerrumHub: Легковесный сервер оркестрации, микро-гипервизор и WebAssembly-экосистема (CAN / Ethernet / Matter / Web)</td>
+</tr>
+<tr>
+<td><strong>Статус</strong></td>
+<td>Draft / Accepted</td>
+</tr>
+<tr>
+<td><strong>Автор</strong></td>
+<td>FerrumOS Core Team</td>
+</tr>
+<tr>
+<td><strong>Дата создания</strong></td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td><strong>Целевые платформы</strong></td>
+<td>Linux (x86_64, aarch64, armv7), Windows (x86_64), macOS (Apple Silicon / Intel), OpenWrt</td>
+</tr>
+<tr>
+<td><strong>Связанные модули</strong></td>
+<td><code>ferrum-runner</code> (микро-хост), <code>ferrum-hub</code> (WASM ядро), <code>ferrum-compiler</code>, <code>rfcs/0001</code>, <code>rfcs/0003</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="1">🎯 1. Введение и Проблематика<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
+<h3 id="11">1.1. Контекст<a class="headerlink" href="#11" title="Permanent link">&para;</a></h3>
+<p>Платформа <strong>FerrumOS</strong> решает задачу детерминированного, быстрого и надежного управления оборудованием на уровне микроконтроллеров (ESP32-C3, ESP32-C6, CH32V307) с использованием безопасного языка Rust, виртуальной машины Rhai/JS и изолированной среды WAMR AOT.</p>
+<p>Однако в комплексных проектах — будь то <strong>умный дом, тепличный комплекс, производственный цех, котельная или мониторинг серверных стоек</strong> — необходим центральный координатор:
+* Долгосрочная история телеметрии (графики датчиков, энергопотребления, аварийные логи).
+* Удаленный доступ и уведомления (Web, PWA, Telegram).
+* Интеграция фабричных устройств сторонних брендов (через Matter и MQTT).
+* Календарные расписания, планировщики и астрономические таймеры.</p>
+<h3 id="12-home-assistant">1.2. Проблемы существующих систем (Home Assistant и др.):<a class="headerlink" href="#12-home-assistant" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Тяжеловесность и зависимость от Python</strong>: 1.5–3 ГБ оперативной памяти, долгий холодный старт (1–1.5 мин), паузы на сборку мусора.</li>
+<li><strong>Опасные обновления и деградация БД</strong>: Постоянные ломающие изменения (Breaking Changes), зависания миграций SQLite, риск окирпичивания сервера при обновлении.</li>
+<li><strong>«Суп из сущностей» и YAML-ад</strong>: Разделение логики на искусственные «триггеры и условия» с шаблонизатором Jinja2 путает как новичков, так и опытных инженеров и языковые модели (LLM).</li>
+<li><strong>Хрупкость плагинов</strong>: Ошибка в одной сторонней интеграции способна обрушить весь сервер.</li>
+</ol>
+<hr />
+<h2 id="2-webassembly-">🏛️ 2. Архитектурный прорыв: Неизменяемый Микро-Хост + WebAssembly-Ядро<a class="headerlink" href="#2-webassembly-" title="Permanent link">&para;</a></h2>
+<p>Вместо монолитного тяжелого сервера FerrumHub строится на концепции <strong>WASM-нативной многозадачной операционной среды</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>┌─────────────────────────────────────────────────────────────────────────────────────────┐
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>│                    НЕИЗМЕНЯЕМЫЙ ХОСТ-РАННЕР (ferrum-runner на Rust)                     │
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>│  * «Тонкий и бессмертный» микро-гипервизор (~2 МБ бинарник на Rust)                     │
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>│  * Ничего не знает о датчиках, реле, комнатах и автоматизациях!                         │
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>│  * Предоставляет сырые системные возможности: сокеты, диск, порты COM/CAN, таймеры     │
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>│  * Устанавливается как системная служба ОДИН РАЗ и практически НЕ ТРЕБУЕТ ОБНОВЛЕНИЙ    │
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>├─────────────────────────────────────────────────────────────────────────────────────────┤
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>│                                                                                         │
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>│  ┌─────────────────────────────┐   Шина Shared-Memory IPC  ┌─────────────────────────┐  │
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>│  │       ferrum-hub.wasm       │◄═════════════════════════►│    plugin_telegram.wasm │  │
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>│  │   (СИСТЕМНОЕ ЯДРО HUB)      │       (наносекунды)       │    (Уведомления)        │  │
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>│  │ * Реестр состояний, Matter  │                           └─────────────────────────┘  │
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>│  │ * Time-Series БД, Web API   │                           ┌─────────────────────────┐  │
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>│  │ * ОДИН ФАЙЛ ДЛЯ ВСЕХ ОС!    │◄═════════════════════════►│    plugin_modbus.wasm   │  │
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>│  └──────────────┬──────────────┘                           │    (Опрос котла)        │  │
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>│                 │                                          └─────────────────────────┘  │
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>│  [Квота: 64 МБ, Sandbox]                                    [Квота: 4 МБ, Sandbox]      │
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>└─────────────────┼───────────────────────────────────────────────────────────────────────┘
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>                  │ Доступ к данным
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>                  ▼
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>┌─────────────────────────────────────────────────────────────────────────────────────────┐
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>│                           ХРАНИЛИЩЕ ДАННЫХ (data/)                                      │
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>│  * config.json          — конфигурация сервера                                          │
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>│  * ferrum.db            — база данных истории и состояний (SQLite WAL / redb)           │
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>│  * plugins/             — пользовательские WASM-модули и веб-интерфейсы                 │
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>│  * backups/             — моментальные pre-update снимки                                │
+</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>└─────────────────────────────────────────────────────────────────────────────────────────┘
+</span></code></pre></div>
+<hr />
+<h2 id="3-wasm-">💎 3. Ключевые преимущества WASM-архитектуры<a class="headerlink" href="#3-wasm-" title="Permanent link">&para;</a></h2>
+<h3 id="31">3.1. Один файл релиза для всех платформ<a class="headerlink" href="#31" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Больше не нужно собирать десятки платформо-зависимых бинарников.</li>
+<li><strong><code>ferrum-hub.wasm</code> — единый артефакт</strong>. Он абсолютно одинаково исполняется на Windows, Linux x86_64, Raspberry Pi (ARM64), macOS и роутерах OpenWrt.</li>
+</ul>
+<h3 id="32-">3.2. Пользовательские плагины крутятся в том же микро-хосте<a class="headerlink" href="#32-" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Пользовательские плагины (<code>plugin_xxx.wasm</code>) исполняются <strong>рядом с системным ядром под управлением того же микро-раннера</strong>.</li>
+<li><strong>Абсолютная изоляция сбоев</strong>: если плагин Modbus разделил на ноль или упал — раннер изолирует ошибку (trap). Ядро <code>ferrum-hub.wasm</code> и другие плагины <strong>продолжают работать бесперебойно</strong>.</li>
+<li><strong>Аппаратные квоты ресурсов</strong>: раннер жестко ограничивает память (например, 4 МБ) и процессорное время каждого плагина.</li>
+<li><strong>Сверхбыстрый IPC</strong>: обмен данными между плагинами и ядром происходит через разделяемую память за сотни наносекунд без сетевого оверхеда.</li>
+</ul>
+<h3 id="33-5">3.3. Неубиваемое обновление и мгновенный откат за 5 мс<a class="headerlink" href="#33-5" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Обновление сервера — это не замена системных файлов в ОС (не требуются права root/admin).</li>
+<li>Хост загружает <code>ferrum-hub.new.wasm</code>.</li>
+<li>Если новый модуль успешно стартовал и верифицировал базу данных — он становится активным.</li>
+<li>Если произошёл сбой — хост за <strong>5 миллисекунд откатывается на <code>ferrum-hub.old.wasm</code></strong>.</li>
+</ul>
+<h3 id="34-zero-corruptions">3.4. Транзакционные миграции БД (Zero Corruptions)<a class="headerlink" href="#34-zero-corruptions" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Все миграции схемы БД выполняются внутри строгой ACID-транзакции (<code>BEGIN TRANSACTION ... COMMIT</code>).</li>
+<li>Перед любой миграцией автоматически создаётся легковесный снимок каталога <code>data/</code> (5–15 МБ за 0.3 сек).</li>
+<li>В случае любого сбоя база мгновенно делает <code>ROLLBACK</code> к исходному состоянию.</li>
+</ul>
+<hr />
+<h2 id="4-wamr">🧩 4. Разработка плагинов: Простота и WAMR<a class="headerlink" href="#4-wamr" title="Permanent link">&para;</a></h2>
+<h3 id="41-wamr-wasm">4.1. Единый бинарный стандарт — только WAMR / WASM<a class="headerlink" href="#41-wamr-wasm" title="Permanent link">&para;</a></h3>
+<p>Разработчики пишут на том, на чём им удобно:
+* <strong>AssemblyScript (TypeScript-синтаксис)</strong>: код выглядит как привычный TS, компилируется в чистый <code>.wasm</code>.
+* <strong>Rust</strong>: строгая типизация и безопасность памяти (<code>wasm32-unknown-none</code>).
+* <strong>C / C++</strong>: возможность переиспользовать готовые промышленные библиотеки (BSEC, Modbus, DSP).
+* <strong>Zig / TinyGo</strong>: прямая сборка в WebAssembly.</p>
+<h3 id="42-web-ui-custom-web-ui">4.2. Собственный Web UI плагина (Custom Web UI)<a class="headerlink" href="#42-web-ui-custom-web-ui" title="Permanent link">&para;</a></h3>
+<p>Плагин может иметь собственный интерфейс любого уровня сложности:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>my-awesome-plugin/
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>├── plugin.wasm        &lt;-- Логика (на AssemblyScript, Rust, C)
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>└── ui/                &lt;-- Собственный Web UI плагина
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    ├── index.html     &lt;-- Любой HTML/JS/CSS или Svelte/React бандл
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    └── style.css
+</span></code></pre></div>
+* <strong>Безопасный Sandboxed Iframe</strong>: веб-интерфейс изолирован (архитектура Figma и VS Code Webviews) и не имеет доступа к системным кукам и авторизации.
+* <strong>Мост <code>window.Ferrum.rpc</code></strong>: фронтенд плагина общается со своим WASM-бэкендом в одну строчку кода.</p>
+<h3 id="43-auto-ui">4.3. Автогенерация интерфейса настроек (Auto-UI)<a class="headerlink" href="#43-auto-ui" title="Permanent link">&para;</a></h3>
+<p>Если плагину нужны только параметры конфигурации (токен, порт, интервал) — автор объявляет JSON-схему, а FerrumHub автоматически генерирует модальное окно настроек.</p>
+<hr />
+<h2 id="5-dsl-1-2-3-4">⚡ 5. Потоковые реактивные утилиты (DSL Паттерны 1, 2, 3, 4)<a class="headerlink" href="#5-dsl-1-2-3-4" title="Permanent link">&para;</a></h2>
+<p>В язык скриптов и ВМ внедрены лучшие паттерны потоковой обработки:
+1. <strong><code>.deadband(delta)</code> (Фильтр шума / Report-by-Exception)</strong>:
+   <div class="language-javascript highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kd">const</span><span class="w"> </span><span class="nx">temp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">ADC</span><span class="p">.</span><span class="nx">sensor</span><span class="p">(</span><span class="mf">1</span><span class="p">).</span><span class="nx">deadband</span><span class="p">(</span><span class="mf">0.2</span><span class="p">).</span><span class="nx">can</span><span class="p">(</span><span class="s2">"living/temp"</span><span class="p">);</span>
+</span></code></pre></div>
+2. <strong><code>.map(inMin, inMax, outMin, outMax)</code> (Масштабирование диапазонов)</strong>:
+   <div class="language-javascript highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kd">const</span><span class="w"> </span><span class="nx">level</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">ADC</span><span class="p">.</span><span class="nx">pin</span><span class="p">(</span><span class="mf">2</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="w"> </span><span class="mf">4095</span><span class="p">,</span><span class="w"> </span><span class="mf">0</span><span class="p">,</span><span class="w"> </span><span class="mf">100</span><span class="p">);</span>
+</span></code></pre></div>
+3. <strong><code>.pulse(ms)</code> и <code>.watchdog(ms, callback)</code> (Импульс и Сторож тишины)</strong>:
+   <div class="language-javascript highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nx">buzzer</span><span class="p">.</span><span class="nx">pulse</span><span class="p">(</span><span class="mf">500</span><span class="p">);</span><span class="w"> </span><span class="c1">// автовозврат</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nx">sensor</span><span class="p">.</span><span class="nx">watchdog</span><span class="p">(</span><span class="mf">10000</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">alarm</span><span class="p">.</span><span class="nx">on</span><span class="p">());</span><span class="w"> </span><span class="c1">// защита от засыпания</span>
+</span></code></pre></div>
+4. <strong><code>.throttle(ms)</code> (Rate Limit)</strong>:
+   <div class="language-javascript highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nx">pir</span><span class="p">.</span><span class="nx">throttle</span><span class="p">(</span><span class="mf">3000</span><span class="p">).</span><span class="nx">onClick</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">camera</span><span class="p">.</span><span class="nx">snapshot</span><span class="p">());</span>
+</span></code></pre></div></p>
+<h3 id="51-code-to-graph">5.1. Интерактивный граф Code-to-Graph<a class="headerlink" href="#51-code-to-graph" title="Permanent link">&para;</a></h3>
+<p>Компилятор парсит AST кода и <strong>автоматически строит интерактивную блок-схему связей в FerrumOS Studio</strong>. При живой отладке на плате линии связи пульсируют в реальном времени при прохождении сигналов.</p>
+<hr />
+<h2 id="6-ai-first-prompt-driven">🤖 6. AI-First &amp; Prompt-Driven разработка<a class="headerlink" href="#6-ai-first-prompt-driven" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Никакой путаницы «триггеры vs условия»</strong>:
+   Естественный, интуитивный поток кода: <code>button.onClick(() =&gt; { if (isNight) { ... } })</code>.</li>
+<li><strong>Системный промпт <code>FERRUM_AI_PROMPT.md</code></strong>:
+   Готовый файл с описанием API и правил Fluent Chaining, позволяющий ChatGPT, Claude или Cursor генерировать 100% валидный код с первой попытки.</li>
+<li><strong>Встроенный ИИ-помощник в Studio</strong>:
+   Пользователь формулирует задачу словами — Studio генерирует код, а компилятор на TypeScript проверяет его в браузере за &lt; 1 мс.</li>
+</ol>
+<hr />
+<h2 id="7-ferrumhub-6">🗺️ 7. Дорожная карта реализации FerrumHub (6 этапов)<a class="headerlink" href="#7-ferrumhub-6" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>┌───────────────────────────────────────────────────────────────────────────────────┐
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>│                           ПЛАН РАЗРАБОТКИ FERRUMHUB                               │
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>├─────────────────┬─────────────────────────────────────────────────────────────────┤
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>│ Этап 1 (Раннер) │ Микро-хост ferrum-runner (Rust) + VTable системных возможностей │
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>│ Этап 2 (Ядро)   │ ferrum-hub.wasm (Реестр состояний, шина, Matter/MQTT, HTTP API) │
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>│ Этап 3 (Данные) │ Транзакционные миграции БД + Автобэкапы перед обновлением       │
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>│ Этап 4 (Плагины)│ WAMR Sandbox для user-плагинов + Sandboxed Web UI (iframe)      │
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>│ Этап 5 (Дашборд)│ Встроенный PWA Web UI (Svelte 5 / Tailwind)                     │
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>│ Этап 6 (Релиз)  │ AI-промпты, Studio 1-Click Update, кроссплатформенная дистрибуция│
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>└─────────────────┴─────────────────────────────────────────────────────────────────┘
+</span></code></pre></div>
+<h3 id="1-ferrum-runner">Этап 1: Неизменяемый Микро-Хост (ferrum-runner)<a class="headerlink" href="#1-ferrum-runner" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] Создание крейта <code>crates/ferrum-runner</code> на чистом Rust.</li>
+<li>[ ] Интеграция WAMR для запуска изолированных WASM-модулей с ограничением ресурсов (RAM, CPU).</li>
+<li>[ ] Реализация Host VTable (TCP/UDP сокеты, COM/CAN порты, таймеры, файловая система).</li>
+<li>[ ] Межмодульный Shared-Memory IPC между WASM-инстансами.</li>
+<li>[ ] Размер бинарника: &lt; 3 МБ, старт: &lt; 10 мс.</li>
+</ul>
+<h3 id="2-wasm-ferrum-hubwasm">Этап 2: Системное WASM-Ядро (ferrum-hub.wasm)<a class="headerlink" href="#2-wasm-ferrum-hubwasm" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] Сборка ядра FerrumHub в целевой формат WebAssembly (<code>ferrum-hub.wasm</code>).</li>
+<li>[ ] Реактивная шина состояний (State Bus) и обработчик сценариев Modern JS (Rhai).</li>
+<li>[ ] Интеграция <code>rs-matter</code> (Matter Bridge / Controller) и клиента MQTT.</li>
+<li>[ ] FeOS Fleet Protocol: опрос и синхронизация микроконтроллеров по CAN и Ethernet.</li>
+</ul>
+<h3 id="3">Этап 3: Безопасное хранилище и Транзакционные миграции<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] Изолированный каталог <code>data/</code> с базой данных (SQLite WAL / redb).</li>
+<li>[ ] Атомарные транзакционные миграции схемы БД (<code>BEGIN TRANSACTION ... COMMIT</code>).</li>
+<li>[ ] Автоматический моментальный снимок (Snapshot) перед любым обновлением.</li>
+<li>[ ] A/B горячая замена <code>.wasm</code> модулей с автооткатом за 5 мс.</li>
+</ul>
+<h3 id="4-wasm-custom-ui">Этап 4: Пользовательские WASM-плагины и Custom UI<a class="headerlink" href="#4-wasm-custom-ui" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] SDK для создания плагинов на AssemblyScript (<code>@ferrumos/plugin-sdk</code>) и Rust.</li>
+<li>[ ] Поддержка собственной папки <code>ui/</code> с Sandboxed Iframe.</li>
+<li>[ ] Двусторонний типизированный RPC-мост <code>window.Ferrum.rpc</code>.</li>
+<li>[ ] Автогенерация интерфейса настроек (Auto-UI) по JSON-схеме.</li>
+</ul>
+<h3 id="5-web-dashboard-pwa">Этап 5: Встроенный Web-интерфейс пользователя (Dashboard PWA)<a class="headerlink" href="#5-web-dashboard-pwa" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] Легковесный адаптивный веб-интерфейс на Svelte 5 / Tailwind.</li>
+<li>[ ] Визуальный редактор комнат и плиток без редактирования файлов.</li>
+<li>[ ] Реактивные графики истории телеметрии в реальном времени.</li>
+</ul>
+<h3 id="6-studio-ai-">Этап 6: Интеграция со Studio, AI-Промпты и Релиз<a class="headerlink" href="#6-studio-ai-" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] Файл <code>FERRUM_AI_PROMPT.md</code> и рецепты автоматизаций для нейросетей.</li>
+<li>[ ] Интеграция с FerrumOS Studio: обновление сервера и плагинов в один клик.</li>
+<li>[ ] Публикация единого релиза: <code>ferrum-runner</code> (для всех ОС) + <code>ferrum-hub.wasm</code>.</li>
+</ul>
+<hr />
+<h2 id="8">📊 8. Сравнение архитектур<a class="headerlink" href="#8" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Параметр</th>
+<th style="text-align: left;">Home Assistant (Python)</th>
+<th style="text-align: left;">Node-RED (Node.js)</th>
+<th style="text-align: left;"><strong>FerrumHub (WASM / Rust)</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Архитектура хоста</strong></td>
+<td style="text-align: left;">Монолитный Python процесс</td>
+<td style="text-align: left;">Монолитный Node.js V8</td>
+<td style="text-align: left;"><strong>Неизменяемый Micro-Hypervisor (Rust)</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Прикладное ядро</strong></td>
+<td style="text-align: left;">Python скрипты</td>
+<td style="text-align: left;">JS потоки</td>
+<td style="text-align: left;"><strong>Единый <code>ferrum-hub.wasm</code> для всех ОС</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Изоляция плагинов</strong></td>
+<td style="text-align: left;">❌ Нет (плагин может уронить всё)</td>
+<td style="text-align: left;">❌ Нет (ошибка валит процесс)</td>
+<td style="text-align: left;">🟢 <strong>Полная аппаратная WASM-песочница</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Обновление сервера</strong></td>
+<td style="text-align: left;">Сложное, риск окирпичивания</td>
+<td style="text-align: left;">Ручное обновление npm</td>
+<td style="text-align: left;">🟢 <strong>Замена одного .wasm файла (15 мс)</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Автооткат при сбое</strong></td>
+<td style="text-align: left;">❌ Требуется ручной бэкап</td>
+<td style="text-align: left;">❌ Нет</td>
+<td style="text-align: left;">🟢 <strong>Автоматический откат за 5 мс</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Потребление ОЗУ</strong></td>
+<td style="text-align: left;">1500–3000 МБ</td>
+<td style="text-align: left;">150–350 МБ</td>
+<td style="text-align: left;"><strong>20–50 МБ</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Холодный старт</strong></td>
+<td style="text-align: left;">45–90 секунд</td>
+<td style="text-align: left;">10–20 секунд</td>
+<td style="text-align: left;"><strong>&lt; 0.05 секунды</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Язык автоматизаций</strong></td>
+<td style="text-align: left;">YAML + Jinja2 (триггеры/условия)</td>
+<td style="text-align: left;">Визуальные макароны</td>
+<td style="text-align: left;"><strong>Modern JS / Rhai (естественный поток)</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Пользовательский UI</strong></td>
+<td style="text-align: left;">Lovelace (может зависнуть)</td>
+<td style="text-align: left;">Dashboard (отдельный)</td>
+<td style="text-align: left;"><strong>Sandboxed Iframe + Svelte 5 PWA</strong></td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 FerrumOS Contributors
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.instant", "navigation.tracking", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,4559 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Reactive Micro-OS & Live Hot-Swap Studio for RISC-V & ESP32 Microcontrollers">
+      
+      
+        <meta name="author" content="FerrumOS Contributors">
+      
+      
+        <link rel="canonical" href="https://atitoff-dotcom.github.io/FerrumOS/rfcs/0001-can-distributed-bus/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../0002-gpio-input-gestures/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>RFC-0001 CAN Distributed Bus - FerrumOS</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-orange" data-md-color-accent="orange">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#roadmap-can-ferrumos" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="FerrumOS" class="md-header__button md-logo" aria-label="FerrumOS" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            FerrumOS
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              RFC-0001 CAN Distributed Bus
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-orange" data-md-color-accent="orange"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-orange" data-md-color-accent="orange"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/atitoff-dotcom/FerrumOS" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    atitoff-dotcom/FerrumOS
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../1_getting_started/01_quickstart/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../2_recipes/home_assistant_mqtt/" class="md-tabs__link">
+          
+  
+  
+  Recipes
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../3_reference/js_api/" class="md-tabs__link">
+          
+  
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../4_concepts/fluent_chaining/" class="md-tabs__link">
+          
+  
+  
+  Concepts
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+  RFCs & Protocols
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../ru/" class="md-tabs__link">
+          
+  
+  
+  🇷🇺 Русский
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="FerrumOS" class="md-nav__button md-logo" aria-label="FerrumOS" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    FerrumOS
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/atitoff-dotcom/FerrumOS" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    atitoff-dotcom/FerrumOS
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1_getting_started/01_quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    01. Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1_getting_started/02_first_sensor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    02. First Sensor
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1_getting_started/03_smart_button/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    03. Smart Button
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1_getting_started/04_troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    04. Troubleshooting & FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Recipes
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Recipes
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2_recipes/home_assistant_mqtt/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home Assistant MQTT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2_recipes/battery_deep_sleep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Battery Deep Sleep
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2_recipes/can_networking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CAN Bus Networking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2_recipes/esl_display/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Electronic Shelf Labels (E-Ink)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2_recipes/ota_firmware_update/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OTA Firmware Updates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2_recipes/inter_script_signals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inter-Script Signals (IPC)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../3_reference/js_api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fluent JS Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../3_reference/js_api/signals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reactive Signals & IPC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../3_reference/js_api/gpio/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GPIO (Digital Pins)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../3_reference/js_api/adc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADC (Analog & Calibration)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../3_reference/js_api/i2c/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    I2C (Bus & Sensors)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../3_reference/js_api/spi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SPI (High-Speed Bus)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../3_reference/js_api/pwm_ws2812/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PWM & WS2812 (LEDs)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../3_reference/js_api/power_sleep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Power & Sleep Modes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../3_reference/js_api/thread_network/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Thread & Wireless Network
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../3_reference/js_api/uart_modbus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UART & Modbus
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../3_reference/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ferrum CLI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Concepts
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Concepts
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../4_concepts/fluent_chaining/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fluent Chaining Standard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../4_concepts/hot_swap_15ms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sub-20ms Hot-Swap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../4_concepts/reactive_events/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reactive Event Reactor
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../4_concepts/reactive_signals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Zero-Copy Signal Bus
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../4_concepts/digital_twin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Digital Twin & Telemetry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFCs & Protocols
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    RFCs & Protocols
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Registry & Statuses
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0001 CAN Distributed Bus
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0001 CAN Distributed Bus
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 Ключевые цели и философия
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏛️ Архитектура системы
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#modern-human-js" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📐 Спецификация Modern Human-JS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📐 Спецификация Modern Human-JS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Настройка шины на узле:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Модуль выключателя (Публикация сигнала):
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Модуль в силовом щитке (Подписка на сигнал):
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-home-assistant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Шлюз в Home Assistant:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-can" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Аварийные сигналы с приоритетом арбитража CAN:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#29-can-id-hardware-acceptance-mask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧬 29-битная иерархия CAN ID и аппаратная фильтрация (Hardware Acceptance Mask)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧬 29-битная иерархия CAN ID и аппаратная фильтрация (Hardware Acceptance Mask)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#zero-cpu-overhead" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Аппаратный отсев в кремнии (Zero CPU Overhead)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bloom-generation-counter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🌸 Программный Bloom-фильтр подписок и Generation Counter
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🌸 Программный Bloom-фильтр подписок и Generation Counter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-64-bloom-2-cpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 64-битный Bloom-фильтр в прерывании (2 такта CPU)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-generation-counter-ntp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Generation Counter (Эпохи без NTP)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frp-over-can" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚡ FRP over CAN (Заливка задач по витой паре)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📱 Полевое обслуживание без интернета («Подошел с телефоном»)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📱 Полевое обслуживание без интернета («Подошел с телефоном»)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Шаг 1. Физическая активация (Защита от взлома по радио)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Шаг 2. Скачивание ядра с телефона
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-can-p2p-mesh-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Шаг 3. Каскадная раздача по CAN (P2P Mesh Update)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#single-wire-open-drain-can-25-zero-transceiver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔌 Режим Single-Wire Open-Drain CAN (25 кбит/с, Zero-Transceiver)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔌 Режим Single-Wire Open-Drain CAN (25 кбит/с, Zero-Transceiver)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Схемотехника и физический уровень:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры кода:
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Примеры кода:">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Сценарий для Модуля 1 (Выключатель на стене):
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Сценарий для Модуля 2 (Силовой щиток с реле):
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bluetooth-5-ble-webbluetooth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔵 Bluetooth 5 (BLE WebBluetooth) для смены ядра со смартфона
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔵 Bluetooth 5 (BLE WebBluetooth) для смены ядра со смартфона">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ble-wi-fi-softap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Преимущества BLE перед Wi-Fi SoftAP:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#broadcast-dual-bank-ota-iso-tp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚡ Синхронная параллельная прошивка ядер (Broadcast Dual-Bank OTA) на базе ISO-TP
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚡ Синхронная параллельная прошивка ядер (Broadcast Dual-Bank OTA) на базе ISO-TP">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-o1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Параллельное обновление флота за единое время $O(1)$:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-iso-tp-iso-15765-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Применение автомобильного стандарта ISO-TP (ISO 15765-2):
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-batching-bitmask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Решение коллизий: Пакетная битовая карта (Batching Bitmask) и выборочный дозапрос:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Расчет реального времени прошивки на шине 25 кбит/с:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#roadmap-phases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗓️ Этапы реализации (Roadmap Phases)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0002-gpio-input-gestures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0002 GPIO Gestures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0003-self-healing-discovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0003 Self-Healing Discovery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0004-ferrum-hub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0004 FerrumHub
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0005-high-availability-clustering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0005 High Availability Cluster
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0006-ferrum-canvas-visual-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0006 FerrumCanvas UI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0007-brokerless-decentralized-fabric/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0007 Brokerless P2P Fabric
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0008-ferrum-scada-universal-mimic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0008 FerrumSCADA Mimic
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0009-fault-and-stress-testing-protocol/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0009 Reliability Stress Testing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0010-bsb-boiler-system-bus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0010 Unified Boiler Stack
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0011-embedded-wsrpc-lightweight-crypto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0011 Embedded WSRPC Crypto
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0012-network-time-synchronization-and-scheduled-events/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0012 Network Time Synchronization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🇷🇺 Русский
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    🇷🇺 Русский
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Главная
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Начало работы
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Начало работы
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/1_getting_started/01_quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    01. Быстрый старт
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/1_getting_started/02_first_sensor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    02. Первый сенсор
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/1_getting_started/03_smart_button/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    03. Умная кнопка
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/1_getting_started/04_troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    04. Решение проблем
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Рецепты
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Рецепты
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/2_recipes/home_assistant_mqtt/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home Assistant MQTT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/2_recipes/battery_deep_sleep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Глубокий сон
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/2_recipes/can_networking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Сеть CAN
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/2_recipes/esl_display/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Электронная бумага
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/2_recipes/ota_firmware_update/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Обновление OTA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/2_recipes/inter_script_signals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Межскриптовые сигналы
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_4" id="__nav_7_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Справочник API
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Справочник API
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/3_reference/js_api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Обзор Fluent JS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/3_reference/js_api/signals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Реактивные сигналы (state.signal)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/3_reference/js_api/gpio/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GPIO
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/3_reference/js_api/adc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/3_reference/js_api/i2c/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    I2C
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/3_reference/js_api/spi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SPI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/3_reference/js_api/pwm_ws2812/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PWM & WS2812
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/3_reference/js_api/power_sleep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Питание и сон
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/3_reference/js_api/thread_network/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Thread и сеть
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/3_reference/js_api/uart_modbus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UART & Modbus
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/3_reference/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ferrum CLI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_5" id="__nav_7_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Концепции
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Концепции
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/4_concepts/fluent_chaining/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Стандарт Fluent Chaining
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/4_concepts/hot_swap_15ms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hot-Swap за 15 мс
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/4_concepts/reactive_events/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Реактивная модель
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/4_concepts/reactive_signals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Архитектура шины сигналов
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/4_concepts/digital_twin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Цифровой двойник
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_6" id="__nav_7_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Реестр RFC
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Реестр RFC
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/rfcs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Реестр и статусы
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/rfcs/0001-can-distributed-bus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0001 Сеть CAN
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/rfcs/0002-gpio-input-gestures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0002 Жесты GPIO
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/rfcs/0003-self-healing-discovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0003 Авто-дискавери
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/rfcs/0004-ferrum-hub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0004 FerrumHub
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/rfcs/0005-high-availability-clustering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0005 Высокая доступность
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/rfcs/0006-ferrum-canvas-visual-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0006 FerrumCanvas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/rfcs/0007-brokerless-decentralized-fabric/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0007 P2P Fabric
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/rfcs/0008-ferrum-scada-universal-mimic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0008 FerrumSCADA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/rfcs/0009-fault-and-stress-testing-protocol/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0009 Регламент стресс-тестов
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/rfcs/0010-bsb-boiler-system-bus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0010 Котельный шлюз
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/rfcs/0011-embedded-wsrpc-lightweight-crypto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0011 Криптография WSRPC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ru/rfcs/0012-network-time-synchronization-and-scheduled-events/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC-0012 Синхронизация времени
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 Ключевые цели и философия
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏛️ Архитектура системы
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#modern-human-js" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📐 Спецификация Modern Human-JS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📐 Спецификация Modern Human-JS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Настройка шины на узле:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Модуль выключателя (Публикация сигнала):
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Модуль в силовом щитке (Подписка на сигнал):
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-home-assistant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Шлюз в Home Assistant:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-can" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Аварийные сигналы с приоритетом арбитража CAN:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#29-can-id-hardware-acceptance-mask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧬 29-битная иерархия CAN ID и аппаратная фильтрация (Hardware Acceptance Mask)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧬 29-битная иерархия CAN ID и аппаратная фильтрация (Hardware Acceptance Mask)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#zero-cpu-overhead" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Аппаратный отсев в кремнии (Zero CPU Overhead)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bloom-generation-counter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🌸 Программный Bloom-фильтр подписок и Generation Counter
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🌸 Программный Bloom-фильтр подписок и Generation Counter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-64-bloom-2-cpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 64-битный Bloom-фильтр в прерывании (2 такта CPU)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-generation-counter-ntp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Generation Counter (Эпохи без NTP)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frp-over-can" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚡ FRP over CAN (Заливка задач по витой паре)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📱 Полевое обслуживание без интернета («Подошел с телефоном»)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📱 Полевое обслуживание без интернета («Подошел с телефоном»)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Шаг 1. Физическая активация (Защита от взлома по радио)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Шаг 2. Скачивание ядра с телефона
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-can-p2p-mesh-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Шаг 3. Каскадная раздача по CAN (P2P Mesh Update)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#single-wire-open-drain-can-25-zero-transceiver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔌 Режим Single-Wire Open-Drain CAN (25 кбит/с, Zero-Transceiver)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔌 Режим Single-Wire Open-Drain CAN (25 кбит/с, Zero-Transceiver)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Схемотехника и физический уровень:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры кода:
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Примеры кода:">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Сценарий для Модуля 1 (Выключатель на стене):
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Сценарий для Модуля 2 (Силовой щиток с реле):
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bluetooth-5-ble-webbluetooth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔵 Bluetooth 5 (BLE WebBluetooth) для смены ядра со смартфона
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔵 Bluetooth 5 (BLE WebBluetooth) для смены ядра со смартфона">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ble-wi-fi-softap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Преимущества BLE перед Wi-Fi SoftAP:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#broadcast-dual-bank-ota-iso-tp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚡ Синхронная параллельная прошивка ядер (Broadcast Dual-Bank OTA) на базе ISO-TP
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚡ Синхронная параллельная прошивка ядер (Broadcast Dual-Bank OTA) на базе ISO-TP">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-o1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Параллельное обновление флота за единое время $O(1)$:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-iso-tp-iso-15765-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Применение автомобильного стандарта ISO-TP (ISO 15765-2):
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-batching-bitmask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Решение коллизий: Пакетная битовая карта (Batching Bitmask) и выборочный дозапрос:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Расчет реального времени прошивки на шине 25 кбит/с:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#roadmap-phases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗓️ Этапы реализации (Roadmap Phases)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="roadmap-can-ferrumos">🧭 Roadmap: CAN-шина в FerrumOS — Распределенные сигналы, автономность и полевое обслуживание<a class="headerlink" href="#roadmap-can-ferrumos" title="Permanent link">&para;</a></h1>
+<p>Этот документ фиксирует архитектурный план и спецификацию интеграции шины <strong>CAN (TWAI / CAN 2.0B)</strong> в экосистему <strong>FerrumOS</strong>: распределенные реактивные сигналы, заливка байткода по проводу (FRP over CAN), режим энергосбережения «холодный чип» и сценарий полевого обновления ядра с мобильного телефона.</p>
+<hr />
+<h2 id="_1">🎯 Ключевые цели и философия<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Автономность без единой точки отказа (No Single Point of Failure)</strong>:</li>
+<li>Критическая автоматика (свет, реле, аварийные краны, насосы) работает на физическом уровне шины CAN.</li>
+<li>Выключатель и лампа реагируют за <strong>0.2 миллисекунды</strong> даже при отключенном роутере, зависшем Home Assistant или обесточенном сервере.</li>
+<li><strong>Отказ от «тупых экспандеров портов» в пользу автономных узлов</strong>:</li>
+<li>Каждый узел на шине — полноценный микроконтроллер ESP32-C6 со своей локальной логикой, аппаратными фильтрами антидребезга и защитой.</li>
+<li>Пины всегда локальны. Узлы общаются <strong>исключительно через распределенные сигналы</strong>.</li>
+<li><strong>«Холодный чип» и чистый радиоэфир</strong>:</li>
+<li>На ведомых CAN-модулях радиомодем Wi-Fi по умолчанию выключен (<code>WiFi.mode(OFF)</code>).</li>
+<li>Потребление чипа снижается до 15–20 мА, температура падает до 30°C (вместо 55°C), устраняются радиопомехи в спальнях и металлических щитах.</li>
+<li><strong>Компилятор считает ID сам (Zero Magic Numbers)</strong>:</li>
+<li>Пользователь не пишет магические hex-числа вида <code>.can(0x101)</code>.</li>
+<li>29-битный расширенный CAN ID автоматически рассчитывается компилятором из имени сигнала (<code>"living/light"</code>).</li>
+</ol>
+<hr />
+<h2 id="_2">🏛️ Архитектура системы<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>               ┌────────────────────────────────────────────────┐
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>               │         FerrumOS Studio / Home Assistant       │
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>               └───────────────────────┬────────────────────────┘
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>                                       │ (Wi-Fi / Ethernet)
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>                                       ▼
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>                       ┌───────────────────────────────┐
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>                       │   Модуль 1: Сетевой Шлюз      │
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>                       │   (ESP32-C6: Wi-Fi + CAN)     │
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>                       └───────────────┬───────────────┘
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>                                       │
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>     ═════════════════════════════ CAN Bus (Витая пара CAN-H / CAN-L, 250 kbps) ═════════════════════════════
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>         │                                              │                                      │
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>         ▼                                              ▼                                      ▼
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>┌─────────────────────────────┐        ┌─────────────────────────────┐        ┌─────────────────────────────┐
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>│ Модуль 2: Силовой Щит       │        │ Модуль 3: Выключатель       │        │ Модуль 4: Датчик Протечки   │
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>│ (Реле люстры, контакторы)   │        │ (Кнопки с антидребезгом)    │        │ (Аварийный клапан)          │
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>│ * Wi-Fi выключен (холодный) │        │ * Wi-Fi выключен (холодный) │        │ * Wi-Fi выключен (холодный) │
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>└─────────────────────────────┘        └─────────────────────────────┘        └─────────────────────────────┘
+</span></code></pre></div>
+<hr />
+<h2 id="modern-human-js">📐 Спецификация Modern Human-JS<a class="headerlink" href="#modern-human-js" title="Permanent link">&para;</a></h2>
+<h3 id="1">1. Настройка шины на узле:<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
+<div class="language-javascript highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// Атомарная инициализация CAN-контроллера TWAI:</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nx">CAN</span><span class="p">.</span><span class="nx">bus</span><span class="p">()</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="p">.</span><span class="nx">pins</span><span class="p">({</span><span class="w"> </span><span class="nx">tx</span><span class="o">:</span><span class="w"> </span><span class="mf">21</span><span class="p">,</span><span class="w"> </span><span class="nx">rx</span><span class="o">:</span><span class="w"> </span><span class="mf">22</span><span class="w"> </span><span class="p">})</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="p">.</span><span class="nx">baud</span><span class="p">(</span><span class="mf">250000</span><span class="p">);</span>
+</span></code></pre></div>
+<h3 id="2">2. Модуль выключателя (Публикация сигнала):<a class="headerlink" href="#2" title="Permanent link">&para;</a></h3>
+<div class="language-javascript highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// Объявляем сигнал и отправляем его в CAN-шину:</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kd">let</span><span class="w"> </span><span class="nx">light</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">state</span><span class="p">.</span><span class="nx">signal</span><span class="p">(</span><span class="s2">"living/light"</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">).</span><span class="nx">can</span><span class="p">();</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="kd">const</span><span class="w"> </span><span class="nx">btn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">GPIO</span><span class="p">.</span><span class="nx">input</span><span class="p">(</span><span class="mf">4</span><span class="p">).</span><span class="nx">pullUp</span><span class="p">().</span><span class="nx">debounce</span><span class="p">(</span><span class="mf">25</span><span class="p">);</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="nx">btn</span><span class="p">.</span><span class="nx">onClick</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="nx">light</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">!</span><span class="nx">light</span><span class="p">;</span><span class="w"> </span><span class="c1">// Мгновенный 1-байтовый CAN-кадр в шину</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="p">});</span>
+</span></code></pre></div>
+<h3 id="3">3. Модуль в силовом щитке (Подписка на сигнал):<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
+<div class="language-javascript highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// Слушаем тот же сигнал из CAN-шины:</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kd">let</span><span class="w"> </span><span class="nx">light</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">state</span><span class="p">.</span><span class="nx">signal</span><span class="p">(</span><span class="s2">"living/light"</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">).</span><span class="nx">can</span><span class="p">();</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="kd">const</span><span class="w"> </span><span class="nx">relay</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">GPIO</span><span class="p">.</span><span class="nx">output</span><span class="p">(</span><span class="mf">15</span><span class="p">).</span><span class="nx">initial</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="nx">light</span><span class="p">.</span><span class="nx">watch</span><span class="p">((</span><span class="nx">on</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span><span class="nx">relay</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">on</span><span class="p">);</span><span class="w"> </span><span class="c1">// Срабатывание за 0.2 мс</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="p">});</span>
+</span></code></pre></div>
+<h3 id="4-home-assistant">4. Шлюз в Home Assistant:<a class="headerlink" href="#4-home-assistant" title="Permanent link">&para;</a></h3>
+<div class="language-javascript highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1">// Шлюз слушает CAN и транслирует состояние в Home Assistant:</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kd">let</span><span class="w"> </span><span class="nx">light</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">state</span><span class="p">.</span><span class="nx">signal</span><span class="p">(</span><span class="s2">"living/light"</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">)</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="p">.</span><span class="nx">can</span><span class="p">()</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="p">.</span><span class="nx">exposeHA</span><span class="p">(</span><span class="s2">"switch"</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">"Люстра в гостиной"</span><span class="w"> </span><span class="p">});</span>
+</span></code></pre></div>
+<h3 id="5-can">5. Аварийные сигналы с приоритетом арбитража CAN:<a class="headerlink" href="#5-can" title="Permanent link">&para;</a></h3>
+<div class="language-javascript highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1">// Аварийный сигнал с наивысшим приоритетом в шине:</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kd">let</span><span class="w"> </span><span class="nx">leak</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">state</span><span class="p">.</span><span class="nx">signal</span><span class="p">(</span><span class="s2">"bath/leak"</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">).</span><span class="nx">can</span><span class="p">().</span><span class="nx">urgent</span><span class="p">();</span>
+</span></code></pre></div>
+<hr />
+<h2 id="29-can-id-hardware-acceptance-mask">🧬 29-битная иерархия CAN ID и аппаратная фильтрация (Hardware Acceptance Mask)<a class="headerlink" href="#29-can-id-hardware-acceptance-mask" title="Permanent link">&para;</a></h2>
+<p>Для устранения нагрузки на процессор и предотвращения «захлебывания» узлов на общей шине расширенный 29-битный CAN ID структурируется компилятором как иерархический вектор:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a> 28      26 25          16 15                           0
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>┌──────────┬──────────────┬──────────────────────────────┐
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>│ Priority │  Subnet /    │      Signal Hash (CRC16)     │
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>│ (3 bits) │ Area ID (10) │      (16 bits, Murmur3)      │
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>└──────────┴──────────────┴──────────────────────────────┘
+</span></code></pre></div>
+<ol>
+<li><strong>Биты приоритета <code>[28..26]</code> (3 бита)</strong>:</li>
+<li><code>000</code> — Критические аварии / Безопасность (протечка, пожар, аварийный STOP). Побеждают любой трафик в физическом арбитраже шины за 0 нс.</li>
+<li><code>001</code> — Оперативное управление в реальном времени (кнопки, выключатели, реле).</li>
+<li><code>010</code> — Стандартные распределенные сигналы (термостаты, таймеры).</li>
+<li><code>011</code> — Потоковая телеметрия (температура, мощность, диагностика).</li>
+<li>
+<p><code>100..111</code> — Системный транспорт (FRP over CAN, ISO-TP Broadcast OTA).</p>
+</li>
+<li>
+<p><strong>Префикс зоны <code>Subnet / Area ID</code> <code>[25..16]</code> (10 бит)</strong>:</p>
+</li>
+<li>Идентифицирует логический шкаф, этаж или сегмент автоматики (до 1024 зон).</li>
+<li>
+<p>Позволяет локализовать трафик: сигналы кухни не будят контроллеры котельной.</p>
+</li>
+<li>
+<p><strong>Хэш сигнала <code>Signal Hash</code> <code>[15..0]</code> (16 бит)</strong>:</p>
+</li>
+<li>Детерминированный 16-битный хэш имени сигнала (например, <code>Murmur3("living/light")</code>).</li>
+</ol>
+<h3 id="zero-cpu-overhead">Аппаратный отсев в кремнии (Zero CPU Overhead)<a class="headerlink" href="#zero-cpu-overhead" title="Permanent link">&para;</a></h3>
+<p>Контроллеры ESP32-C6 (TWAI) и CH32V307 содержат аппаратные компараторы <strong>Acceptance Filter (AMR / ACR)</strong>:
+- Регистр фильтра настраивается на маску <code>Subnet ID</code> узла.
+- Пакеты чужих зон отбрасываются <strong>напрямую в кремнии контроллера за 0 процессорных тактов</strong>, не вызывая аппаратного прерывания и сохраняя ядро в глубоком сне.</p>
+<hr />
+<h2 id="bloom-generation-counter">🌸 Программный Bloom-фильтр подписок и Generation Counter<a class="headerlink" href="#bloom-generation-counter" title="Permanent link">&para;</a></h2>
+<p>Если узел подключен к шине с десятками сигналов одной зоны:</p>
+<h3 id="1-64-bloom-2-cpu">1. 64-битный Bloom-фильтр в прерывании (2 такта CPU)<a class="headerlink" href="#1-64-bloom-2-cpu" title="Permanent link">&para;</a></h3>
+<p>При компиляции скрипта ядро строит 64-битную битовую маску всех активных подписок <code>Signal.on()</code>:
+<div class="language-rust highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1">// При регистрации подписки:</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">bloom_mask</span><span class="w"> </span><span class="o">|=</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="k">u64</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="p">(</span><span class="n">hash1</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">64</span><span class="p">))</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="k">u64</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="p">(</span><span class="n">hash2</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">64</span><span class="p">));</span>
+</span></code></pre></div>
+При получении кадра драйвер в ISR выполняет элементарную битовую проверку:
+<div class="language-rust highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kd">let</span><span class="w"> </span><span class="n">tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="k">u64</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="p">(</span><span class="n">frame_hash</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">64</span><span class="p">));</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">bloom_mask</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">tag</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">tag</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="k">return</span><span class="p">;</span><span class="w"> </span><span class="c1">// Чужой сигнал: мгновенный возврат из ISR без аллокаций памяти!</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="p">}</span>
+</span></code></pre></div></p>
+<h3 id="2-generation-counter-ntp">2. Generation Counter (Эпохи без NTP)<a class="headerlink" href="#2-generation-counter-ntp" title="Permanent link">&para;</a></h3>
+<p>Каждый узел-источник поддерживает монотонный 16-битный счетчик поколений <code>epoch_seq</code>:
+- Узел-приемник отбрасывает пакеты с <code>seq &lt;= last_seen_seq</code>.
+- Это обеспечивает абсолютную защиту от повторных пакетов (Replay Attack) и коллизий при переподключении шины без тяжелых сетевых протоколов времени (NTP).</p>
+<hr />
+<h2 id="frp-over-can">⚡ FRP over CAN (Заливка задач по витой паре)<a class="headerlink" href="#frp-over-can" title="Permanent link">&para;</a></h2>
+<p>Для заливки сценариев не требуется Wi-Fi на каждом модуле:
+1. Studio шлет байткод на <strong>Шлюз</strong> по TCP/HTTP.
+2. Шлюз нарезает байткод (30–150 байт) на CAN-кадры протокола FRP.
+3. Время передачи 100 байт на скорости 250 кбит/с составляет <strong>всего ~5 мс</strong>.
+4. Целевой модуль принимает байткод, проверяет CRC16 и выполняет <strong>Zero-Downtime Hot-Swap</strong> на лету.</p>
+<hr />
+<h2 id="_3">📱 Полевое обслуживание без интернета («Подошел с телефоном»)<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>Сценарий для объектов без Wi-Fi (дачи, подземные паркинги, насосные станции):</p>
+<h3 id="1_1">Шаг 1. Физическая активация (Защита от взлома по радио)<a class="headerlink" href="#1_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Инженер подходит к модулю и удерживает сервисную кнопку <strong>5 секунд</strong> (или нажимает 5 быстрых кликов).</li>
+<li>Модуль кратковременно пробуждает Wi-Fi радиомодем в сервисный режим.</li>
+</ul>
+<h3 id="2_1">Шаг 2. Скачивание ядра с телефона<a class="headerlink" href="#2_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Вариант А (Hotspot)</strong>: Модуль подключается к заранее настроенной точке доступа смартфона (<code>Ferrum-Service</code>) и сам забирает свежий релиз.</li>
+<li><strong>Вариант Б (SoftAP)</strong>: Модуль раздает Wi-Fi <code>FerrumOS-Setup</code>. Инженер открывает браузер на телефоне и загружает файл прошивки через мобильный веб-интерфейс.</li>
+</ul>
+<h3 id="3-can-p2p-mesh-update">Шаг 3. Каскадная раздача по CAN (P2P Mesh Update)<a class="headerlink" href="#3-can-p2p-mesh-update" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Обновленный модуль выступает «донором» и передает бинарник по витой паре CAN соседним узлам.</li>
+<li><strong>Весь дом обновляется за один визит</strong>, даже если сотовая связь ловит только у входной двери.</li>
+</ul>
+<hr />
+<h2 id="single-wire-open-drain-can-25-zero-transceiver">🔌 Режим Single-Wire Open-Drain CAN (25 кбит/с, Zero-Transceiver)<a class="headerlink" href="#single-wire-open-drain-can-25-zero-transceiver" title="Permanent link">&para;</a></h2>
+<p>Для коротких линий (внутри щитка, на DIN-рейке между соседними автоматами или модулями) дифференциальный трансивер исключается для экономии места и себестоимости:</p>
+<h3 id="_4">Схемотехника и физический уровень:<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Прямой Open-Drain без диодов</strong>:</li>
+<li>Пин <code>TWAI_TX</code> настраивается в режиме прямого открытого стока (Open-Drain).</li>
+<li>Вход <code>TWAI_RX</code> через внутреннюю матрицу GPIO Matrix ESP32-C6 заводится <strong>на тот же самый физический пин</strong> (1 пин на узел).</li>
+<li>Прямой полевик дает $V_{OL} pprox 0.03    ext{ В}$ (настоящий твердый ноль без диодного падения $0.3  ext{ В}$), обеспечивая идеальную помехозащищенность.</li>
+<li><strong>Один резистор подтяжки на шину</strong>:</li>
+<li>Вся шина подтягивается к 3.3V одним резистором $2.2    ext{–}3.3   ext{ кОм}$.</li>
+<li><strong>Скорость 25 кбит/с</strong>:</li>
+<li>Идеальные фронты нарастания через резистивную подтяжку без завалов емкостью проводов.</li>
+<li>1 CAN-кадр передается за <strong>~4 миллисекунды</strong> (мгновенный отклик для выключателей и реле).</li>
+<li>Байткод сценария (100 байт) заливается за <strong>0.3–0.4 секунды</strong>.</li>
+</ol>
+<h3 id="_5">Примеры кода:<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<h4 id="1_2">Сценарий для Модуля 1 (Выключатель на стене):<a class="headerlink" href="#1_2" title="Permanent link">&para;</a></h4>
+<div class="language-javascript highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1">// 1. Инициализация однопроводной шины CAN на GPIO 21 (25 кбит/с):</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="nx">CAN</span><span class="p">.</span><span class="nx">bus</span><span class="p">().</span><span class="nx">singleWire</span><span class="p">(</span><span class="mf">21</span><span class="p">).</span><span class="nx">baud</span><span class="p">(</span><span class="mf">25000</span><span class="p">);</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="c1">// 2. Распределенный сигнал света:</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="kd">let</span><span class="w"> </span><span class="nx">light</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">state</span><span class="p">.</span><span class="nx">signal</span><span class="p">(</span><span class="s2">"living/light"</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">).</span><span class="nx">can</span><span class="p">();</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="c1">// 3. Физическая клавиша выключателя с антидребезгом:</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="kd">const</span><span class="w"> </span><span class="nx">btn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">GPIO</span><span class="p">.</span><span class="nx">input</span><span class="p">(</span><span class="mf">4</span><span class="p">).</span><span class="nx">pullUp</span><span class="p">().</span><span class="nx">debounce</span><span class="p">(</span><span class="mf">25</span><span class="p">);</span>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="nx">btn</span><span class="p">.</span><span class="nx">onClick</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w">    </span><span class="nx">light</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">!</span><span class="nx">light</span><span class="p">;</span><span class="w"> </span><span class="c1">// Мгновенная отправка 1-байтового CAN-кадра</span>
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="p">});</span>
+</span></code></pre></div>
+<h4 id="2_2">Сценарий для Модуля 2 (Силовой щиток с реле):<a class="headerlink" href="#2_2" title="Permanent link">&para;</a></h4>
+<div class="language-javascript highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1">// 1. Инициализация однопроводной шины CAN на GPIO 21 (25 кбит/с):</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="nx">CAN</span><span class="p">.</span><span class="nx">bus</span><span class="p">().</span><span class="nx">singleWire</span><span class="p">(</span><span class="mf">21</span><span class="p">).</span><span class="nx">baud</span><span class="p">(</span><span class="mf">25000</span><span class="p">);</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="c1">// 2. Подписка на тот же самый распределенный сигнал:</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="kd">let</span><span class="w"> </span><span class="nx">light</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">state</span><span class="p">.</span><span class="nx">signal</span><span class="p">(</span><span class="s2">"living/light"</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">).</span><span class="nx">can</span><span class="p">();</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="c1">// 3. Локальное силовое реле люстры:</span>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="kd">const</span><span class="w"> </span><span class="nx">relay</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">GPIO</span><span class="p">.</span><span class="nx">output</span><span class="p">(</span><span class="mf">15</span><span class="p">).</span><span class="nx">initial</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="c1">// 4. Реактивный слушатель (срабатывает за 0.2 мс при приходе кадра):</span>
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="nx">light</span><span class="p">.</span><span class="nx">watch</span><span class="p">((</span><span class="nx">on</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="w">    </span><span class="nx">relay</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">on</span><span class="p">);</span>
+</span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="p">});</span>
+</span></code></pre></div>
+<hr />
+<h2 id="bluetooth-5-ble-webbluetooth">🔵 Bluetooth 5 (BLE WebBluetooth) для смены ядра со смартфона<a class="headerlink" href="#bluetooth-5-ble-webbluetooth" title="Permanent link">&para;</a></h2>
+<p>ESP32-C6 аппаратно оснащен радиомодулем <strong>Bluetooth 5 (LE)</strong> с поддержкой высокоскоростного физического уровня <strong>2M PHY</strong> (до 2 Мбит/с). Использование BLE для сервисного обслуживания превосходит Wi-Fi по удобству:</p>
+<h3 id="ble-wi-fi-softap">Преимущества BLE перед Wi-Fi SoftAP:<a class="headerlink" href="#ble-wi-fi-softap" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Без разрыва интернета на телефоне</strong>:
+   Смартфон остается на связи по 4G/5G, может на лету скачать свежий релиз прошивки и одновременно передавать его по BLE на ESP32-C6.</li>
+<li><strong>WebBluetooth прямо из браузера (Zero-Install)</strong>:
+   Не требуется ставить отдельные Android/iOS приложения. Прошивка идет прямо из браузера (Chrome, Edge) через стандартный WebBluetooth API.</li>
+<li><strong>Скорость 2M PHY</strong>:
+   Реальная пропускная способность BLE 5 на ESP32-C6 достигает <strong>100–130 КБ/с</strong>. Бинарный образ ядра Rust (400–500 КБ) пролетает всего за <strong>3–5 секунд</strong>.</li>
+<li><strong>Сценарий работы</strong>:</li>
+<li>На модуле зажимается сервисная кнопка (5 сек).</li>
+<li>Модуль выдает BLE-рекламу <code>Ferrum-OTA</code>.</li>
+<li>В браузере смартфона нажимается кнопка «Подключить» в шторке WebBluetooth.</li>
+<li>Прошивка заливается в OTA-раздел Flash-памяти.</li>
+<li>Модуль перезагружается в новое ядро, BLE выключается, управление возвращается в CAN.</li>
+</ol>
+<hr />
+<h2 id="broadcast-dual-bank-ota-iso-tp">⚡ Синхронная параллельная прошивка ядер (Broadcast Dual-Bank OTA) на базе ISO-TP<a class="headerlink" href="#broadcast-dual-bank-ota-iso-tp" title="Permanent link">&para;</a></h2>
+<p>Поскольку шина CAN физически является широковещательной средой (Broadcast), а все модули построены на единой архитектуре ESP32-C6 RISC-V:</p>
+<h3 id="1-o1">1. Параллельное обновление флота за единое время $O(1)$:<a class="headerlink" href="#1-o1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Шлюз или смартфон передает поток блоков прошивки широковещательным CAN-кадром.</li>
+<li><strong>Все узлы на шине одновременно слушают шину и параллельно записывают блоки во второй (неактивный) банк Flash (<code>ota_1</code>)</strong>.</li>
+<li>Время обновления 50 узлов равно времени обновления одного узла (нет линейного роста времени $N    imes T$).</li>
+<li>Активный банк <code>ota_0</code> продолжает работу вплоть до финальной команды перезапуска (100% Anti-Brick защита).</li>
+</ul>
+<h3 id="2-iso-tp-iso-15765-2">2. Применение автомобильного стандарта ISO-TP (ISO 15765-2):<a class="headerlink" href="#2-iso-tp-iso-15765-2" title="Permanent link">&para;</a></h3>
+<p>Для нарезки, контроля последовательности и предотвращения переполнения Flash-памяти используется транспорт <strong>ISO-TP</strong>:</p>
+<ol>
+<li><strong>Кадры Consecutive Frame (CF) со счетчиками Sequence Number (SN)</strong>:</li>
+<li>Каждый пакет данных содержит 4-битный счетчик <code>SN</code> (от 0 до 15).</li>
+<li><strong>Мгновенное обнаружение сбоя на лету</strong>: если модуль ожидал кадр с <code>SN=2</code>, а прилетел <code>SN=3</code>, он мгновенно (за 4 мс) фиксирует потерю конкретного фрагмента, не дожидаясь конца всей прошивки.</li>
+<li><strong>Защита от переполнения буферов Flash (STmin Pacing)</strong>:</li>
+<li>Стирание сектора 4 КБ во Flash занимает 10–20 мс.</li>
+<li>Передатчик соблюдает интервал разделения кадров <code>STmin</code> (Separation Time = 1–2 мс), гарантируя, что даже самый медленный чип успевает сбрасывать данные во Flash-буфер.</li>
+</ol>
+<h3 id="3-batching-bitmask">3. Решение коллизий: Пакетная битовая карта (Batching Bitmask) и выборочный дозапрос:<a class="headerlink" href="#3-batching-bitmask" title="Permanent link">&para;</a></h3>
+<p>Что происходит, если из 16 модулей 15 приняли блок идеально, а 16-й получил ошибку:
+- <strong>Никаких перебиваний в процессе</strong>: пока идет передача стрима (блока 4 КБ), все узлы молчат. Приемники ведут в RAM крошечную битовую маску (64 байта на весь файл).
+- <strong>Фаза проверки (Check Phase)</strong>: по окончании блока шлюз запрашивает статус. Узел №16 отправляет короткий адресный кадр ISO-TP NACK: <code>[NACK: Block #X, Missing SN #2]</code>.
+- <strong>Идемпотентность и защита Flash</strong>: шлюз повторяет недостающий фрагмент в шину. Узел №16 дописывает его, а остальные 15 узлов сверяются со своей битовой маской («у нас этот фрагмент уже записан») и <strong>игнорируют дубликат</strong>, сберегая ресурс циклов перезаписи Flash.
+- <strong>Синхронный коммит</strong>: когда все узлы подтверждают совпадение SHA-256 хэша, шлюз отправляет широковещательную команду <code>OTA_COMMIT_AND_REBOOT</code>, и весь флот одновременно переключается на новое ядро.</p>
+<h3 id="4-25">4. Расчет реального времени прошивки на шине 25 кбит/с:<a class="headerlink" href="#4-25" title="Permanent link">&para;</a></h3>
+<p>Физическая пропускная способность при скорости <strong>25 кбит/с</strong>:
+- По проводу передается 25 000 импульсов в секунду.
+- С учетом 29-битных заголовков CAN, бит-стаффинга, контрольных сумм CRC и нарезки ISO-TP реальная эффективная скорость составляет <strong>~1.1–1.2 КБ/с (чистый полезный поток данных)</strong>.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Тип данных</th>
+<th style="text-align: left;">Размер</th>
+<th style="text-align: left;">Скорость передачи</th>
+<th style="text-align: left;">Время заливки</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>JS-сценарий (задача автоматики)</strong></td>
+<td style="text-align: left;"><strong>~100 байт</strong></td>
+<td style="text-align: left;">1.2 КБ/с</td>
+<td style="text-align: left;"><strong>0.08 секунды</strong> ⚡ (мгновенно)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Большой сложный проект JS</strong></td>
+<td style="text-align: left;"><strong>~2 КБ</strong></td>
+<td style="text-align: left;">1.2 КБ/с</td>
+<td style="text-align: left;"><strong>~1.7 секунды</strong> ⚡</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>WASM / AOT модуль драйвера</strong></td>
+<td style="text-align: left;"><strong>~8 КБ</strong></td>
+<td style="text-align: left;">1.2 КБ/с</td>
+<td style="text-align: left;"><strong>~6.8 секунды</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Ядро CAN-модуля без Wi-Fi (сжатие LZ4)</strong></td>
+<td style="text-align: left;"><strong>~70 КБ</strong></td>
+<td style="text-align: left;">1.2 КБ/с</td>
+<td style="text-align: left;"><strong>~58 секунд</strong> ⏱️ (&lt; 1 минуты)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Полное ядро с Wi-Fi + smoltcp (сжатие LZ4)</strong></td>
+<td style="text-align: left;"><strong>~180 КБ</strong></td>
+<td style="text-align: left;">1.2 КБ/с</td>
+<td style="text-align: left;"><strong>~2.5 минуты</strong> ⏱️</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Полное ядро без сжатия</strong></td>
+<td style="text-align: left;"><strong>~400 КБ</strong></td>
+<td style="text-align: left;">1.2 КБ/с</td>
+<td style="text-align: left;"><strong>~5.5 минут</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Ключевые преимущества:</strong>
+1. <strong>Время O(1) для всего флота</strong>: Благодаря широковещательной трансляции (Broadcast), 20 или 50 модулей в щитке обновляются за те же самые <strong>2.5 минуты</strong>, что и один модуль (время не масштабируется линейно).
+2. <strong>Zero-Downtime при прошивке ядер</strong>: Все 2.5 минуты модули продолжают управлять светом и реле из активного Банка 1. Переключение происходит мгновенно после верификации SHA-256.
+3. <strong>Экспресс-альтернатива по BLE</strong>: Если требуется экстренное обновление конкретного узла за секунды — через Bluetooth 5 (BLE 2M PHY) то же ядро прошивается со смартфона всего за <strong>3.5 секунды</strong>.</p>
+<hr />
+<h2 id="roadmap-phases">🗓️ Этапы реализации (Roadmap Phases)<a class="headerlink" href="#roadmap-phases" title="Permanent link">&para;</a></h2>
+<ul>
+<li>[ ] <strong>Фаза 1: Драйвер TWAI (CAN) в Rust прошивке ESP32-C6</strong>:</li>
+<li>Инициализация периферии TWAI (TX/RX, 25k/250k baud, режим Open-Drain).</li>
+<li>Прерывания приема и аппаратный Acceptance Filter.</li>
+<li>[ ] <strong>Фаза 2: Поддержка <code>.can()</code> в компиляторе JavaScript</strong>:</li>
+<li>Автоматический расчет 29-битного CAN ID из имени сигнала.</li>
+<li>Упаковка битов приоритета (<code>.urgent()</code>).</li>
+<li>[ ] <strong>Фаза 3: Транспорт FRP over CAN в Studio</strong>:</li>
+<li>Проксирование задач и телеметрии через узел-шлюз.</li>
+<li>Визуализация топологии CAN-шины в Studio Dashboard.</li>
+<li>[ ] <strong>Фаза 4: Сервисный режим BLE и синхронный Broadcast OTA</strong>:</li>
+<li>WebBluetooth flasher для обновления ядра с телефона.</li>
+<li>Синхронная параллельная прошивка второго банка Flash по ISO-TP.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 FerrumOS Contributors
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.instant", "navigation.tracking", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
