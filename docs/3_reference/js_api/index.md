@@ -28,6 +28,7 @@ const relay = GPIO.output(15)
 
 ## API Modules
 
+- [Reactive Signals & IPC](signals.md) — Inter-script communication, reactive state variables, and watchers.
 - [GPIO](gpio.md) — Digital outputs, inputs, hardware debounce filters, and gesture detection.
 - [I2C](i2c.md) — Master I2C bus transactions, register reads/writes, sensor drivers.
 - [SPI](spi.md) — High-speed SPI transactions for displays and radio transceivers.

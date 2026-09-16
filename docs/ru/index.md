@@ -103,10 +103,41 @@ while (true) {
 
 ---
 
-## 🧭 Разделы документации
+## 🧭 Полный каталог документации
 
-- **[🚀 Начало работы](1_getting_started/01_quickstart.md)** — Пошаговые вводные уроки от распаковки до первой программы.
-- **[💡 Рецепты и задачи](2_recipes/home_assistant_mqtt.md)** — Практические руководства: Home Assistant, глубокий сон, CAN-шина, E-Paper.
-- **[📖 Справочник API](3_reference/js_api/index.md)** — Полное описание `GPIO`, `ADC`, `I2C`, `SPI`, `Power`, `CLI`.
-- **[⚙️ Концепции платформы](4_concepts/fluent_chaining.md)** — Архитектурные принципы: Fluent Chaining, Hot-Swap, реактивность.
-- **[📐 RFC и протоколы](rfcs/index.md)** — Будущие протоколы, открытые предложения и процесс контрибьютинга.
+### 🚀 Начало работы
+- [01. Быстрый старт](1_getting_started/01_quickstart.md) — Подключение платы и запуск первого реактивного скрипта.
+- [02. Первый сенсор](1_getting_started/02_first_sensor.md) — Настройка шины I2C и чтение телеметрии климата.
+- [03. Умная кнопка](1_getting_started/03_smart_button.md) — Аппаратный антидребезг и жесты (клики, удержание).
+- [04. Решение проблем и FAQ](1_getting_started/04_troubleshooting.md) — USB-драйверы, доступ к COM-порту и прошивка.
+
+### 💡 Рецепты и прикладные задачи
+- [Интеграция с Home Assistant по MQTT](2_recipes/home_assistant_mqtt.md) — Zero-configuration MQTT Auto-Discovery.
+- [Глубокий сон и батарейное питание](2_recipes/battery_deep_sleep.md) — Retention RAM, режим PDS и микроамперное потребление.
+- [Межскриптовое взаимодействие (IPC)](2_recipes/inter_script_signals.md) — Неблокирующий обмен сигналами между задачами.
+- [Сетевая шина CAN](2_recipes/can_networking.md) — Распределенный обмен сигналами между платами по TWAI.
+- [Электронная бумага (E-Paper)](2_recipes/esl_display.md) — Дисплеи E-Ink с минимальным расходом памяти.
+- [Беспроводное обновление (OTA)](2_recipes/ota_firmware_update.md) — Горячая замена байткода и отказоустойчивый A/B Dual-Boot.
+
+### 📖 Справочник API
+- [Обзор JavaScript Fluent API](3_reference/js_api/index.md) — Принципы атомарных цепочек методов.
+- [Реактивные сигналы и IPC](3_reference/js_api/signals.md) — Межскриптовый обмен данными и подписчики `.watch()`.
+- [GPIO (Цифровые пины)](3_reference/js_api/gpio.md) — Настройка входов, выходов, подтяжек и фильтров.
+- [ADC (Аналоговые входы)](3_reference/js_api/adc.md) — Калибровка напряжений, аттенюация и оверсэмплинг.
+- [Шина I2C](3_reference/js_api/i2c.md) — Транзакции Master, чтение и запись регистров сенсоров.
+- [Шина SPI](3_reference/js_api/spi.md) — Скоростная передача данных для экранов и памяти.
+- [PWM и WS2812](3_reference/js_api/pwm_ws2812.md) — Аппаратный ШИМ и адресные светодиодные ленты.
+- [Питание и сон](3_reference/js_api/power_sleep.md) — Управление энергосбережением и источниками пробуждения.
+- [Сеть Thread](3_reference/js_api/thread_network.md) — Mesh-сети 802.15.4 и протоколы CoAP/UDP.
+- [UART и Modbus](3_reference/js_api/uart_modbus.md) — Последовательные порты и опрос устройств Modbus RTU.
+- [Справочник Ferrum CLI](3_reference/cli.md) — Консольные команды сборки, прошивки и деплоя.
+
+### ⚙️ Концепции и архитектура
+- [Стандарт Fluent Chaining](4_concepts/fluent_chaining.md) — Почему цепочки исключают аппаратные глитчи на пинах.
+- [Hot-Swap за 15 мс](4_concepts/hot_swap_15ms.md) — Как код обновляется на лету без перезагрузки чипа.
+- [Реактивная модель событий](4_concepts/reactive_events.md) — Аппаратные прерывания вместо блокирующих `delay()`.
+- [Реактивная шина сигналов](4_concepts/reactive_signals.md) — Архитектура IPC без блокировок и динамической памяти.
+- [Цифровой двойник и телеметрия](4_concepts/digital_twin.md) — Живая интерактивная схема выводов платы в Studio.
+
+### 📐 Архитектурные предложения и RFC
+- [Реестр RFC и статусы](rfcs/index.md) — Матрица готовности будущих протоколов и спецификаций.

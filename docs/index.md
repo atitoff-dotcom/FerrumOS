@@ -103,10 +103,41 @@ while (true) {
 
 ---
 
-## 🧭 Documentation Sections
+## 🧭 Complete Documentation Directory
 
-- **[🚀 Getting Started](1_getting_started/01_quickstart.md)** — Step-by-step guides from unboxing to first automation.
-- **[💡 Recipes & How-To](2_recipes/home_assistant_mqtt.md)** — Ready-to-copy solutions for Home Assistant, Deep Sleep, CAN bus, and E-Paper.
-- **[📖 API Reference](3_reference/js_api/index.md)** — Comprehensive documentation of `GPIO`, `ADC`, `I2C`, `SPI`, `Power`, `CLI`.
-- **[⚙️ Concepts](4_concepts/fluent_chaining.md)** — Core engineering ideas: Fluent Chaining, Hot-Swap, and Reactive execution.
-- **[📐 RFCs & Roadmap](rfcs/index.md)** — Future protocols, community proposals, and development status.
+### 🚀 Getting Started
+- [01. Quickstart](1_getting_started/01_quickstart.md) — Connect your board and run your first reactive script.
+- [02. First Sensor](1_getting_started/02_first_sensor.md) — I2C sensor bus configuration and telemetry.
+- [03. Smart Button](1_getting_started/03_smart_button.md) — Offload debounce and click gestures to hardware.
+- [04. Troubleshooting & FAQ](1_getting_started/04_troubleshooting.md) — USB drivers, COM port access, and flash recovery.
+
+### 💡 Recipes & How-To Guides
+- [Home Assistant & MQTT](2_recipes/home_assistant_mqtt.md) — Zero-configuration MQTT Auto-Discovery.
+- [Battery Deep Sleep](2_recipes/battery_deep_sleep.md) — Retention RAM, PDS sleep, and micro-amp telemetry.
+- [Inter-Script Signals (IPC)](2_recipes/inter_script_signals.md) — Lock-free task communication and decoupled architecture.
+- [CAN Bus Networking](2_recipes/can_networking.md) — Multi-node distributed signals over TWAI.
+- [Electronic Shelf Labels (E-Paper)](2_recipes/esl_display.md) — Ultra-low-power E-Ink displays.
+- [OTA Firmware Updates](2_recipes/ota_firmware_update.md) — Hot-swap bytecode and A/B dual-boot recovery.
+
+### 📖 API Reference
+- [JavaScript Fluent API Overview](3_reference/js_api/index.md) — Atomic method chaining guidelines.
+- [Reactive Signals & IPC](3_reference/js_api/signals.md) — Inter-script communication and watchers.
+- [GPIO (Digital Pins)](3_reference/js_api/gpio.md) — Input/output pin configuration and gestures.
+- [ADC (Analog Inputs)](3_reference/js_api/adc.md) — Voltage attenuation and multisampling.
+- [I2C Bus](3_reference/js_api/i2c.md) — Master transactions and sensor reading.
+- [SPI Bus](3_reference/js_api/spi.md) — High-speed display and flash memory access.
+- [PWM & WS2812](3_reference/js_api/pwm_ws2812.md) — Hardware PWM and addressable LED control.
+- [Power & Sleep](3_reference/js_api/power_sleep.md) — Energy management and wake triggers.
+- [Thread Network](3_reference/js_api/thread_network.md) — 802.15.4 low-power mesh networking.
+- [UART & Modbus](3_reference/js_api/uart_modbus.md) — Serial and Modbus RTU communications.
+- [Ferrum CLI Reference](3_reference/cli.md) — Command-line build, flash, and pack tools.
+
+### ⚙️ Architecture & Concepts
+- [Fluent Chaining Standard](4_concepts/fluent_chaining.md) — Why method chaining prevents pin glitches.
+- [Sub-20ms Live Hot-Swap](4_concepts/hot_swap_15ms.md) — How code updates without restarting the chip.
+- [Reactive Event Reactor](4_concepts/reactive_events.md) — Event queues vs wasteful blocking delays.
+- [Zero-Copy Signal Bus](4_concepts/reactive_signals.md) — IPC architecture and version-tracked transitions.
+- [Digital Twin & Telemetry](4_concepts/digital_twin.md) — Live visual pin state mirroring in Studio.
+
+### 📐 Architectural Proposals & RFCs
+- [RFC Registry & Statuses](rfcs/index.md) — Status matrix for all upcoming protocols and subsystems.
