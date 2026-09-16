@@ -21,39 +21,31 @@ Write clean **Modern JavaScript**, deploy tasks to running hardware in **15 mill
 
 ## ⚡ Quick Action
 
-<div class="grid cards" markdown>
+<div class="grid cards" markdown="1">
 
--   :material-rocket-launch:{ .lg .middle } __Quick Start Guide__
-
-    ---
+-   ### 🚀 Quick Start Guide
 
     Flash your board and deploy your first script in under 3 minutes.
 
-    [:octicons-arrow-right-24: Start Tutorial](1_getting_started/01_quickstart.md)
+    [**Start Tutorial →**](1_getting_started/01_quickstart.md)
 
--   :material-download:{ .lg .middle } __Download Studio__
-
-    ---
+-   ### 📥 Download Studio
 
     Standalone Windows Installer or Portable zero-dependency edition.
 
-    [:octicons-arrow-right-24: Get v0.6.0](https://github.com/atitoff-dotcom/FerrumOS/releases)
+    [**Get v0.6.0 →**](https://github.com/atitoff-dotcom/FerrumOS/releases)
 
--   :material-book-open-page-variant:{ .lg .middle } __Fluent JS API__
-
-    ---
+-   ### 📖 Fluent JS API
 
     Explore the complete atomic method chaining hardware reference.
 
-    [:octicons-arrow-right-24: Browse API](3_reference/js_api/index.md)
+    [**Browse API →**](3_reference/js_api/index.md)
 
--   :material-file-document-edit:{ .lg .middle } __RFC Registry__
-
-    ---
+-   ### 📋 RFC Registry
 
     Inspect architectural proposals, protocols (CAN, BSB/OpenTherm), and specs.
 
-    [:octicons-arrow-right-24: View RFCs](rfcs/index.md)
+    [**View RFCs →**](rfcs/index.md)
 
 </div>
 

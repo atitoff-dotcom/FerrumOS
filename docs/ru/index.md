@@ -21,39 +21,31 @@ FerrumOS — это сверхбыстрая реактивная микро-о�
 
 ## ⚡ Быстрый переход
 
-<div class="grid cards" markdown>
+<div class="grid cards" markdown="1">
 
--   :material-rocket-launch:{ .lg .middle } __Быстрый старт__
-
-    ---
+-   ### 🚀 Быстрый старт
 
     Прошивка платы и первый реактивный скрипт менее чем за 3 минуты.
 
-    [:octicons-arrow-right-24: Начать обучение](1_getting_started/01_quickstart.md)
+    [**Начать обучение →**](1_getting_started/01_quickstart.md)
 
--   :material-download:{ .lg .middle } __Скачать Studio__
-
-    ---
+-   ### 📥 Скачать Studio
 
     Установщик для Windows или портативная версия без зависимостей.
 
-    [:octicons-arrow-right-24: Скачать v0.6.0](https://github.com/atitoff-dotcom/FerrumOS/releases)
+    [**Скачать v0.6.0 →**](https://github.com/atitoff-dotcom/FerrumOS/releases)
 
--   :material-book-open-page-variant:{ .lg .middle } __Справочник JS API__
-
-    ---
+-   ### 📖 Справочник JS API
 
     Полная спецификация атомарного цепочечного Fluent Chaining API.
 
-    [:octicons-arrow-right-24: Открыть справочник](3_reference/js_api/index.md)
+    [**Открыть справочник →**](3_reference/js_api/index.md)
 
--   :material-file-document-edit:{ .lg .middle } __Реестр RFC__
-
-    ---
+-   ### 📋 Реестр RFC
 
     Архитектурные предложения, новые протоколы (CAN, BSB/OpenTherm) и статусы.
 
-    [:octicons-arrow-right-24: Смотреть RFC](rfcs/index.md)
+    [**Смотреть RFC →**](rfcs/index.md)
 
 </div>
 
