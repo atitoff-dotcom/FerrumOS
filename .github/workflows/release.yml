@@ -1,0 +1,41 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Tag name (e.g. v0.6.0)'
+        required: true
+        default: 'v0.6.0'
+
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    name: Publish GitHub Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Determine Tag Name
+        id: vars
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "tag=${{ github.event.inputs.tag_name }}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.vars.outputs.tag }}
+          name: FerrumOS ${{ steps.vars.outputs.tag }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true

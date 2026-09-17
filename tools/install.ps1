@@ -96,14 +96,11 @@ if ($IsLinux -or $IsMacOS) {
     Write-Host "          curl -fsSL https://raw.githubusercontent.com/$REPO/main/tools/install.sh | bash" -ForegroundColor Yellow
 }
 
-# 2. Determine Download URLs (Releases primary, Raw Git fallback)
-$UrlCandidates = @()
-if ($Version -eq "latest") {
-    $UrlCandidates += "https://github.com/$REPO/releases/latest/download/$BinaryName"
-    $UrlCandidates += "https://raw.githubusercontent.com/$REPO/main/releases/v0.6.0/$BinaryName"
+# 2. Determine Download URL (GitHub Releases)
+$DownloadUrl = if ($Version -eq "latest") {
+    "https://github.com/$REPO/releases/latest/download/$BinaryName"
 } else {
-    $UrlCandidates += "https://github.com/$REPO/releases/download/$Version/$BinaryName"
-    $UrlCandidates += "https://raw.githubusercontent.com/$REPO/main/releases/$Version/$BinaryName"
+    "https://github.com/$REPO/releases/download/$Version/$BinaryName"
 }
 
 Write-Host "Target binary:   $BinaryName" -ForegroundColor Gray
@@ -123,20 +120,17 @@ $TargetExe = Join-Path $InstallDir "ferrum.exe"
 $TempExe = Join-Path $InstallDir "ferrum_temp.exe"
 
 # 4. Download Binary
-Write-Host "Downloading FerrumOS executable..." -ForegroundColor Cyan
+Write-Host "Downloading FerrumOS executable from GitHub Releases..." -ForegroundColor Cyan
 
 $DownloadSuccess = $false
-foreach ($Url in $UrlCandidates) {
-    try {
-        if (Test-Path $TempExe) { Remove-Item $TempExe -Force -ErrorAction SilentlyContinue }
-        Invoke-WebRequest -Uri $Url -OutFile $TempExe -UseBasicParsing -Headers @{"User-Agent" = "FerrumOS-Installer"}
-        if ((Test-Path $TempExe) -and (Get-Item $TempExe).Length -gt 100000) {
-            $DownloadSuccess = $true
-            break
-        }
-    } catch {
-        # Try next candidate
+try {
+    if (Test-Path $TempExe) { Remove-Item $TempExe -Force -ErrorAction SilentlyContinue }
+    Invoke-WebRequest -Uri $DownloadUrl -OutFile $TempExe -UseBasicParsing -Headers @{"User-Agent" = "FerrumOS-Installer"}
+    if ((Test-Path $TempExe) -and (Get-Item $TempExe).Length -gt 100000) {
+        $DownloadSuccess = $true
     }
+} catch {
+    # Download failed, will check local candidates below
 }
 
 if ($DownloadSuccess) {

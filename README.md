@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <a href="releases/v0.6.0/"><img src="https://img.shields.io/badge/Release-v0.6.0-blue.svg" alt="Release"></a>
+  <a href="https://github.com/atitoff-dotcom/FerrumOS/releases"><img src="https://img.shields.io/badge/Release-v0.6.0-blue.svg" alt="Release"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg" alt="License"></a>
   <a href="#quick-install"><img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-0078D6.svg?logo=windows" alt="Platform"></a>
   <a href="#supported-hardware"><img src="https://img.shields.io/badge/Target-RISC--V%20(ESP32--C6%20%7C%20C3)-orange.svg" alt="Target"></a>
