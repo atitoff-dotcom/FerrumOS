@@ -2,322 +2,322 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/1_getting_started/01_quickstart/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/1_getting_started/02_first_sensor/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/1_getting_started/03_smart_button/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/1_getting_started/04_troubleshooting/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/2_recipes/battery_deep_sleep/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/2_recipes/can_networking/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/2_recipes/esl_display/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/2_recipes/home_assistant_mqtt/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/2_recipes/inter_script_signals/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/2_recipes/ota_firmware_update/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/3_reference/cli/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/3_reference/js_api/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/3_reference/js_api/adc/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/3_reference/js_api/gpio/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/3_reference/js_api/i2c/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/3_reference/js_api/power_sleep/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/3_reference/js_api/pwm_ws2812/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/3_reference/js_api/signals/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/3_reference/js_api/spi/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/3_reference/js_api/thread_network/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/3_reference/js_api/uart_modbus/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/4_concepts/digital_twin/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/4_concepts/fluent_chaining/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/4_concepts/hot_swap_15ms/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/4_concepts/reactive_events/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/4_concepts/reactive_signals/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/rfcs/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/rfcs/0001-can-distributed-bus/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/rfcs/0002-gpio-input-gestures/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/rfcs/0003-self-healing-discovery/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/rfcs/0004-ferrum-hub/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/rfcs/0005-high-availability-clustering/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/rfcs/0006-ferrum-canvas-visual-dashboard/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/rfcs/0007-brokerless-decentralized-fabric/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/rfcs/0008-ferrum-scada-universal-mimic/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/rfcs/0009-fault-and-stress-testing-protocol/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/rfcs/0010-bsb-boiler-system-bus/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/rfcs/0011-embedded-wsrpc-lightweight-crypto/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/rfcs/0012-network-time-synchronization-and-scheduled-events/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/1_getting_started/01_quickstart/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/1_getting_started/02_first_sensor/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/1_getting_started/03_smart_button/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/1_getting_started/04_troubleshooting/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/2_recipes/battery_deep_sleep/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/2_recipes/can_networking/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/2_recipes/esl_display/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/2_recipes/home_assistant_mqtt/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/2_recipes/inter_script_signals/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/2_recipes/ota_firmware_update/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/3_reference/cli/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/3_reference/js_api/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/3_reference/js_api/adc/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/3_reference/js_api/gpio/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/3_reference/js_api/i2c/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/3_reference/js_api/power_sleep/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/3_reference/js_api/pwm_ws2812/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/3_reference/js_api/signals/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/3_reference/js_api/spi/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/3_reference/js_api/thread_network/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/3_reference/js_api/uart_modbus/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/4_concepts/digital_twin/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/4_concepts/fluent_chaining/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/4_concepts/hot_swap_15ms/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/4_concepts/reactive_events/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/4_concepts/reactive_signals/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/rfcs/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/rfcs/0001-can-distributed-bus/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/rfcs/0002-gpio-input-gestures/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/rfcs/0003-self-healing-discovery/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/rfcs/0004-ferrum-hub/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/rfcs/0005-high-availability-clustering/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/rfcs/0006-ferrum-canvas-visual-dashboard/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/rfcs/0007-brokerless-decentralized-fabric/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/rfcs/0008-ferrum-scada-universal-mimic/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/rfcs/0009-fault-and-stress-testing-protocol/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/rfcs/0010-bsb-boiler-system-bus/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/rfcs/0011-embedded-wsrpc-lightweight-crypto/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
     <url>
          <loc>https://atitoff-dotcom.github.io/FerrumOS/ru/rfcs/0012-network-time-synchronization-and-scheduled-events/</loc>
-         <lastmod>2026-09-16</lastmod>
+         <lastmod>2026-09-17</lastmod>
     </url>
 </urlset>
