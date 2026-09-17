@@ -17,6 +17,64 @@
 
 ---
 
+## Реализовано
+
+### 1. Спецификация Fluent JS API и проверенные сниппеты
+
+#### 1.1 Вход с аппаратным антидребезгом (Debounce)
+<!-- snippet: id="gpio_input" category="Кнопки / Входы" title="Вход с фильтром (Debounce)" icon="fa-shield" desc="Цифровой вход с аппаратным антидребезгом и задержкой." badges="['Debounce: 50ms', 'Pull-up', 'Zero-CPU']" -->
+```javascript
+// Атомарная инициализация входа с подтяжкой и антидребезгом
+const sensor = GPIO.input(4)
+    .pullUp()
+    .invert(true)
+    .debounce(50); // 50 мс фильтр дребезга
+
+const isTriggered = sensor.read();
+```
+
+#### 1.2 Умная кнопка (Click / Hold)
+<!-- snippet: id="gpio_button" category="Кнопки / Входы" title="Умная кнопка (Click / Hold)" icon="fa-hand-pointer" desc="Аппаратное распознавание жестов кнопки с нулевой нагрузкой на CPU." badges="['Жесты: Click/Hold', 'Zero-CPU wait']" -->
+```javascript
+const btn = GPIO.button(9)
+    .pullUp()
+    .debounce(30);
+
+const relay = GPIO.output(15).initial(false);
+
+btn.onClick(() => {
+    relay.toggle();
+});
+
+btn.onHold(() => {
+    relay.low();
+});
+```
+
+#### 1.3 Умная кнопка со сложными жестами (Click, Double Click, Hold)
+<!-- snippet: id="btn_smart_gestures" category="Кнопки / Входы" title="Умная кнопка (Click, Double, Hold)" icon="fa-hand-pointer" desc="Аппаратный детектор жестов: одиночный клик, двойной клик, длинное удержание." badges="['Smart Button', '4 события', 'Zero-CPU wait']" -->
+```javascript
+const btn = GPIO.button(9).pullUp().debounce(25);
+const led = GPIO.output(8).initial(false);
+
+btn.onClick(() => {
+    led.toggle();
+});
+
+btn.onDoubleClick(() => {
+    led.high();
+    delay(100);
+    led.low();
+});
+
+btn.onHold(() => {
+    led.low();
+});
+```
+
+
+---
+
 ## 🏛️ Архитектурные принципы и паттерны использования
 
 * **Для простых единичных задач** (например, мигнуть тестовым диодом):
@@ -110,6 +168,8 @@
   ```
 
 ---
+
+## Планируется
 
 ### Этап 5. Автономные счетчики импульсов (Pulse Counter & Pulse Meter)
 > **Цель**: Точный учет расхода воды, газа, электроэнергии и измерение скорости вращения (RPM).
