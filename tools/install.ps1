@@ -1,32 +1,32 @@
-﻿<#
-.SYNOPSIS
-    FerrumOS Fast Installer for Windows (PowerShell)
-.DESCRIPTION
-    Installs the FerrumOS CLI & Studio launcher into the user profile,
-    configures environment variables, and enables instant terminal access.
-.EXAMPLE
-    irm https://raw.githubusercontent.com/atitoff-dotcom/FerrumOS/main/tools/install.ps1 | iex
-.EXAMPLE
-    .\install.ps1 -Uninstall
-#>
-
-[CmdletBinding()]
-param(
-    [Parameter(Mandatory = $false)]
-    [string]$Version = "latest",
-
-    [Parameter(Mandatory = $false)]
-    [string]$InstallDir = "$env:LOCALAPPDATA\FerrumOS\bin",
-
-    [Parameter(Mandatory = $false)]
-    [switch]$Uninstall,
-
-    [Parameter(Mandatory = $false)]
-    [switch]$DryRun
-)
+﻿# ==============================================================================
+#  FerrumOS Fast Installer for Windows (PowerShell)
+# ==============================================================================
+# Usage:
+#   irm https://raw.githubusercontent.com/atitoff-dotcom/FerrumOS/main/install.ps1 | iex
+#   .\install.ps1 -Uninstall
+# ==============================================================================
 
 $ErrorActionPreference = "Stop"
-[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+
+# Default configuration
+$Version = if ($env:FERRUM_VERSION) { $env:FERRUM_VERSION } else { "latest" }
+$InstallDir = if ($env:FERRUM_INSTALL_DIR) { $env:FERRUM_INSTALL_DIR } else { "$env:LOCALAPPDATA\FerrumOS\bin" }
+$Uninstall = $false
+$DryRun = $false
+
+# Parse args if passed directly
+for ($i = 0; $i -lt $args.Count; $i++) {
+    $arg = $args[$i]
+    if ($arg -eq "-Uninstall" -or $arg -eq "--uninstall") {
+        $Uninstall = $true
+    } elseif ($arg -eq "-DryRun" -or $arg -eq "--dry-run") {
+        $DryRun = $true
+    } elseif ($arg -eq "-Version" -or $arg -eq "--version") {
+        $Version = $args[++$i]
+    } elseif ($arg -eq "-InstallDir" -or $arg -eq "--dir") {
+        $InstallDir = $args[++$i]
+    }
+}
 
 # Ensure modern TLS
 try {
@@ -40,7 +40,7 @@ $REPO = "atitoff-dotcom/FerrumOS"
 function Write-FerrumBanner {
     Write-Host ""
     Write-Host "  ================================================================" -ForegroundColor Cyan
-    Write-Host "   🛡️  FerrumOS — Reactive Embedded OS & Studio Suite for IoT" -ForegroundColor White
+    Write-Host "   [+] FerrumOS -- Reactive Embedded OS and Studio Suite for IoT" -ForegroundColor White
     Write-Host "  ================================================================" -ForegroundColor Cyan
     Write-Host ""
 }
@@ -48,7 +48,7 @@ function Write-FerrumBanner {
 function Remove-Ferrum {
     param([string]$TargetDir)
 
-    Write-Host "🗑️  Removing FerrumOS from '$TargetDir'..." -ForegroundColor Yellow
+    Write-Host "[-] Removing FerrumOS from '$TargetDir'..." -ForegroundColor Yellow
 
     if (Test-Path $TargetDir) {
         Remove-Item -Path $TargetDir -Recurse -Force
@@ -66,12 +66,12 @@ function Remove-Ferrum {
         Write-Host "   [OK] Removed '$TargetDir' from User PATH" -ForegroundColor Green
     }
 
-    Write-Host "`n✅ FerrumOS has been successfully uninstalled.`n" -ForegroundColor Green
+    Write-Host "`n[OK] FerrumOS has been successfully uninstalled.`n" -ForegroundColor Green
 }
 
 if ($Uninstall) {
     Remove-Ferrum -TargetDir $InstallDir
-    exit 0
+    return
 }
 
 Write-FerrumBanner
@@ -80,25 +80,28 @@ Write-FerrumBanner
 $Arch = $env:PROCESSOR_ARCHITECTURE
 if ($Arch -ne "AMD64" -and $Arch -ne "ARM64") {
     Write-Error "Unsupported CPU architecture: $Arch. FerrumOS currently supports x86_64 (AMD64) and ARM64 on Windows."
-    exit 1
+    return
 }
 
 $BinaryName = if ($Arch -eq "ARM64") { "ferrum-windows-arm64.exe" } else { "ferrum-windows-x86_64.exe" }
-Write-Host "🔍 Detected system: Windows ($Arch)" -ForegroundColor Gray
+Write-Host "Detected system: Windows ($Arch)" -ForegroundColor Gray
 
-# 2. Determine Download URL
+# 2. Determine Download URLs (Releases primary, Raw Git fallback)
+$UrlCandidates = @()
 if ($Version -eq "latest") {
-    $DownloadUrl = "https://github.com/$REPO/releases/latest/download/$BinaryName"
+    $UrlCandidates += "https://github.com/$REPO/releases/latest/download/$BinaryName"
+    $UrlCandidates += "https://raw.githubusercontent.com/$REPO/main/releases/v0.6.0/$BinaryName"
 } else {
-    $DownloadUrl = "https://github.com/$REPO/releases/download/$Version/$BinaryName"
+    $UrlCandidates += "https://github.com/$REPO/releases/download/$Version/$BinaryName"
+    $UrlCandidates += "https://raw.githubusercontent.com/$REPO/main/releases/$Version/$BinaryName"
 }
 
-Write-Host "📦 Target binary:   $BinaryName" -ForegroundColor Gray
-Write-Host "📂 Install folder:  $InstallDir" -ForegroundColor Gray
+Write-Host "Target binary:   $BinaryName" -ForegroundColor Gray
+Write-Host "Install folder:  $InstallDir" -ForegroundColor Gray
 
 if ($DryRun) {
-    Write-Host "`n[DryRun] Would download '$DownloadUrl' to '$InstallDir\ferrum.exe' and add to PATH.`n" -ForegroundColor Yellow
-    exit 0
+    Write-Host "`n[DryRun] Would download '$BinaryName' to '$InstallDir\ferrum.exe' and add to PATH.`n" -ForegroundColor Yellow
+    return
 }
 
 # 3. Create Target Directory
@@ -110,23 +113,31 @@ $TargetExe = Join-Path $InstallDir "ferrum.exe"
 $TempExe = Join-Path $InstallDir "ferrum_temp.exe"
 
 # 4. Download Binary
-Write-Host "⬇️  Downloading FerrumOS executable..." -ForegroundColor Cyan
+Write-Host "Downloading FerrumOS executable..." -ForegroundColor Cyan
 
-try {
-    $WebClient = New-Object System.Net.WebClient
-    $WebClient.Headers.Add("User-Agent", "FerrumOS-Installer")
-    $WebClient.DownloadFile($DownloadUrl, $TempExe)
+$DownloadSuccess = $false
+foreach ($Url in $UrlCandidates) {
+    try {
+        if (Test-Path $TempExe) { Remove-Item $TempExe -Force -ErrorAction SilentlyContinue }
+        Invoke-WebRequest -Uri $Url -OutFile $TempExe -UseBasicParsing -Headers @{"User-Agent" = "FerrumOS-Installer"}
+        if ((Test-Path $TempExe) -and (Get-Item $TempExe).Length -gt 100000) {
+            $DownloadSuccess = $true
+            break
+        }
+    } catch {
+        # Try next candidate
+    }
+}
 
-    # Atomic move
+if ($DownloadSuccess) {
     if (Test-Path $TargetExe) {
         Remove-Item $TargetExe -Force
     }
     Move-Item -Path $TempExe -Destination $TargetExe -Force
     Write-Host "   [OK] Downloaded and installed: $TargetExe" -ForegroundColor Green
-} catch {
+} else {
     if (Test-Path $TempExe) { Remove-Item $TempExe -Force -ErrorAction SilentlyContinue }
-    Write-Host "⚠️  Direct download failed: $($_.Exception.Message)" -ForegroundColor Yellow
-    Write-Host "   Checking if local built binary exists in dist_release/..." -ForegroundColor Gray
+    Write-Host "Checking if local built binary exists in dist_release/..." -ForegroundColor Gray
     
     # Fallback for local build/testing environment
     $LocalCandidates = @(
@@ -144,8 +155,8 @@ try {
         }
     }
     if (-not $FoundLocal) {
-        Write-Error "Could not retrieve FerrumOS binary from '$DownloadUrl'. Please check your internet connection or release tags."
-        exit 1
+        Write-Error "Could not retrieve FerrumOS binary from any distribution source. Please check your internet connection."
+        return
     }
 }
 
@@ -166,9 +177,9 @@ if ($env:PATH -split ";" -notcontains $InstallDir) {
     $env:PATH = "$InstallDir;$env:PATH"
 }
 
-# 6. Completion & Quickstart
+# 6. Completion and Quickstart
 Write-Host ""
-Write-Host "🎉 Installation complete!" -ForegroundColor Green
+Write-Host "Installation complete!" -ForegroundColor Green
 Write-Host ""
 Write-Host "  To get started, try:" -ForegroundColor White
 Write-Host "    ferrum --help        " -ForegroundColor Yellow -NoNewline
