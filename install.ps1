@@ -57,13 +57,15 @@ function Remove-Ferrum {
         Write-Host "   [INFO] Target directory not found." -ForegroundColor DarkGray
     }
 
-    # Clean User PATH
-    $UserPath = [Environment]::GetEnvironmentVariable("Path", [EnvironmentVariableTarget]::User)
-    if ($UserPath) {
-        $Parts = $UserPath -split ";" | Where-Object { $_ -ne "" -and $_ -ne $TargetDir }
-        $NewPath = $Parts -join ";"
-        [Environment]::SetEnvironmentVariable("Path", $NewPath, [EnvironmentVariableTarget]::User)
-        Write-Host "   [OK] Removed '$TargetDir' from User PATH" -ForegroundColor Green
+    # Clean User PATH (Windows only)
+    if (-not $IsLinux -and -not $IsMacOS) {
+        $UserPath = [Environment]::GetEnvironmentVariable("Path", [EnvironmentVariableTarget]::User)
+        if ($UserPath) {
+            $Parts = $UserPath -split ";" | Where-Object { $_ -ne "" -and $_ -ne $TargetDir }
+            $NewPath = $Parts -join ";"
+            [Environment]::SetEnvironmentVariable("Path", $NewPath, [EnvironmentVariableTarget]::User)
+            Write-Host "   [OK] Removed '$TargetDir' from User PATH" -ForegroundColor Green
+        }
     }
 
     Write-Host "`n[OK] FerrumOS has been successfully uninstalled.`n" -ForegroundColor Green
@@ -78,13 +80,21 @@ Write-FerrumBanner
 
 # 1. Architecture Check
 $Arch = $env:PROCESSOR_ARCHITECTURE
+if (-not $Arch) {
+    if ([System.Environment]::Is64BitOperatingSystem) { $Arch = "AMD64" } else { $Arch = "x86" }
+}
 if ($Arch -ne "AMD64" -and $Arch -ne "ARM64") {
-    Write-Error "Unsupported CPU architecture: $Arch. FerrumOS currently supports x86_64 (AMD64) and ARM64 on Windows."
+    Write-Error "Unsupported CPU architecture: $Arch. FerrumOS currently supports x86_64 (AMD64) and ARM64."
     return
 }
 
 $BinaryName = if ($Arch -eq "ARM64") { "ferrum-windows-arm64.exe" } else { "ferrum-windows-x86_64.exe" }
-Write-Host "Detected system: Windows ($Arch)" -ForegroundColor Gray
+$OSName = if ($IsLinux) { "Linux" } elseif ($IsMacOS) { "macOS" } else { "Windows" }
+Write-Host "Detected system: $OSName ($Arch)" -ForegroundColor Gray
+if ($IsLinux -or $IsMacOS) {
+    Write-Host "   [NOTE] For Linux/macOS, the native bash installer is recommended:" -ForegroundColor Yellow
+    Write-Host "          curl -fsSL https://raw.githubusercontent.com/$REPO/main/tools/install.sh | bash" -ForegroundColor Yellow
+}
 
 # 2. Determine Download URLs (Releases primary, Raw Git fallback)
 $UrlCandidates = @()
@@ -160,16 +170,18 @@ if ($DownloadSuccess) {
     }
 }
 
-# 5. Configure User PATH
-$UserPath = [Environment]::GetEnvironmentVariable("Path", [EnvironmentVariableTarget]::User)
-$PathEntries = if ($UserPath) { $UserPath -split ";" | Where-Object { $_ -ne "" } } else { @() }
+# 5. Configure User PATH (Windows only)
+if (-not $IsLinux -and -not $IsMacOS) {
+    $UserPath = [Environment]::GetEnvironmentVariable("Path", [EnvironmentVariableTarget]::User)
+    $PathEntries = if ($UserPath) { $UserPath -split ";" | Where-Object { $_ -ne "" } } else { @() }
 
-if ($PathEntries -notcontains $InstallDir) {
-    $NewUserPath = ($PathEntries + $InstallDir) -join ";"
-    [Environment]::SetEnvironmentVariable("Path", $NewUserPath, [EnvironmentVariableTarget]::User)
-    Write-Host "   [OK] Added '$InstallDir' to User PATH" -ForegroundColor Green
-} else {
-    Write-Host "   [INFO] PATH already includes target directory." -ForegroundColor DarkGray
+    if ($PathEntries -notcontains $InstallDir) {
+        $NewUserPath = ($PathEntries + $InstallDir) -join ";"
+        [Environment]::SetEnvironmentVariable("Path", $NewUserPath, [EnvironmentVariableTarget]::User)
+        Write-Host "   [OK] Added '$InstallDir' to User PATH" -ForegroundColor Green
+    } else {
+        Write-Host "   [INFO] PATH already includes target directory." -ForegroundColor DarkGray
+    }
 }
 
 # Update current session PATH so user can type `ferrum` immediately
